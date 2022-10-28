@@ -3,7 +3,7 @@ assets/data/localization_task/
 assets/data/scannet/__pycache__
 
 # ScanQA
-ScanQA/data/qa/*
+ScanQA/data/qa/*.json
 ScanQA/data/glove.p
 ScanQA/lib.pointnet2/build
 ScanQA/lib/pointnet2/dist/
