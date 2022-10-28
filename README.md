@@ -46,10 +46,6 @@ cd PATH
 
 ## License
 
-Please check the LICENSE file. This work may be used non-commercially, meaning for research or evaluation purposes only. For business inquiries, please contact researchinquiries@nvidia.com.
-
-Please note that this repo only hosts the code of SQA3D, the SQA3D datasest is released by Caltech and shall not be viewed as part of the source code.
-
 ## Citation
 If you find our work helpful for your research. Please consider citing our paper.
 ```bibtex
