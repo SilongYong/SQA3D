@@ -1,6 +1,5 @@
 # data
-assets/data/sqa_task/*
-assets/data/localization_task/*
+assets/data/localization_task/
 assets/data/scannet/__pycache__
 
 # ScanQA
