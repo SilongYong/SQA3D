@@ -1,0 +1,24 @@
+# data
+assets/sqa_task/*
+assets/localization_task
+assets/data/scannet/__pycache__
+
+# ScanQA
+ScanQA/data/qa/*
+ScanQA/data/glove.p
+ScanQA/lib.pointnet2/build
+ScanQA/lib/pointnet2/dist/
+ScanQA/lib/pointnet2/pointnet2.egg-info/
+ScanQA/lib/__pycache__
+ScanQA/models/__pycache__
+ScanQA/utils/__pycache__
+
+# MCAN
+MCAN/cache/
+MCAN/en_vectors_web_lg-2.1.0.tar.gz
+MCAN/__pycache__/
+MCAN/models/__pycache__
+MCAN/utils/__pycache__
+
+# ClipBERT
+ClipBERT/src/__pycache__

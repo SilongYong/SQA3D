@@ -1,0 +1,32 @@
+train_dataset: SQA
+
+anno_dir: ../assets/data/sqa_task
+img_dir: ../assets/data/BEV
+MAX_TOKEN: 100
+USE_GLOVE: True
+
+# model: mcan
+# Note: Modifying the hyper-param of MCAN is not recommended. But you may find them in ./utils/__init__.py (MCAN_GQA_PARAMS)
+model: mcan-customized
+model_args:
+  word_emb_path: ./cache/gqa_word_embed.npy
+  encoder: transparent_superpixel_encoder
+  encoder_args: {encoder: pvtv2_b2, use_boxes_dim: False}
+load_encoder: ./cache/pvtv2_b2-{}.pth
+encoder_pretrain: imagenet
+
+train_batches: 1000000
+ep_per_batch: 16
+max_epoch: 12
+
+# 0 -- original
+# 1 -- systematic
+eval_mode: 0
+
+optimizer: adamw             
+optimizer_args: {lr: 0.0001, weight_decay: 0, 'milestones': [100, 200], eps: 1e-8}
+
+print_freq: 10
+save_epoch: 1
+eval_epoch: 1
+grad_norm: 0.5
