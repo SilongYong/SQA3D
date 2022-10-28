@@ -34,7 +34,7 @@ Please refer to [data preparation](assets/dataset.md)
 
 ## Training
 
-Please refer to [ScanQA data](../ScanQA/README.md), [MCAN data](../MCAN/README.md), [ClipBERT data](../ClipBERT/README.md) for details.
+Please refer to [ScanQA](./ScanQA/README.md), [MCAN](./MCAN/README.md), [ClipBERT](./ClipBERT/README.md) for details.
 
 ## Note
 
