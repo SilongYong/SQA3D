@@ -36,7 +36,7 @@ Please refer to [data preparation](assets/dataset.md)
 
 Please refer to [ScanQA data](../ScanQA/README.md), [MCAN data](../MCAN/README.md), [ClipBERT data](../ClipBERT/README.md) for details.
 
-### Note
+## Note
 
 When running corresponding model, please
 ```shell
