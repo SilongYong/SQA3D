@@ -1,6 +1,6 @@
 SQA3D
 ===
-<p align="center"><img width="540" src="./assets/overview.jpg"></p>
+<p align="center"><img width="540" src="./assets/overview.JPG"></p>
 
 This repository hosts the code for the paper:
 
