@@ -25,4 +25,4 @@ train_sqa.py --config-file train_sqa_mcan.yaml
 ```
 
 # Acknowledgements
-We would like to thank [MCAN](https://github.com/MILVLG/mcan-vqa) and [RelVIT](https://github.com/ATR-DBI/ScanQA) for the useful code base.
+We would like to thank [MCAN](https://github.com/MILVLG/mcan-vqa) and [RelViT](https://github.com/NVlabs/RelViT) for their useful code bases.
