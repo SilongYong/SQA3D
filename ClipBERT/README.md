@@ -1,6 +1,6 @@
-## Dataset
+# Running ClipBERT on SQA3D
 
-## Data preparation
+## Data preparation for egocentric videos
 The data preparation pipeline uses the original [ScanNet](https://github.com/ScanNet/ScanNet) repo, please also refer to it.
 
 1. Use the following command to clone the original [ScanNet](https://github.com/ScanNet/ScanNet) repo.
@@ -34,7 +34,7 @@ After doing so, you could find the annotation jsonl file in `./data/txt_db/sqa`
 bash scripts/download_pretrained.sh ./data
 ```
 
-## Running
+## Training
 
 1. Launch the Docker container for running the experiments.
 ```shell
@@ -46,5 +46,5 @@ source launch_container.sh ./data/txt_db ./data/vis_db ./data/finetune ./data/pr
 python src/tasks/run_video_qa.py --config src/configs/sqa_video_base_resnet50.json --output_dir /storage
 ```
 
-Please also refer to the original [ClipBERT repo](https://github.com/jayleicn/ClipBERT).
+Please also refer to the original [ClipBERT repo](https://github.com/jayleicn/ClipBERT) for more details on training and evaluation.
  
