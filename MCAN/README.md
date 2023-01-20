@@ -1,4 +1,4 @@
-## Dataset
+# Running MCAN on SQA3D
 
 ## Data preparation
 
@@ -19,12 +19,10 @@ For convenience, you can download the images rendered by us from [here]()
 pip install path/en_core_web_lg-1.2.0.tar.gz
 ```
 
-## Usage
-
-### Training
+## Training
 ```python
 train_sqa.py --config-file train_sqa_mcan.yaml
 ```
 
-## Acknowledgements
+# Acknowledgements
 We would like to thank [MCAN](https://github.com/MILVLG/mcan-vqa) and [RelVIT](https://github.com/ATR-DBI/ScanQA) for the useful code base.
