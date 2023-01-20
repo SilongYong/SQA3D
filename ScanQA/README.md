@@ -1,6 +1,6 @@
 # Running ScanQA (model) on SQA3D
 
-## Data preparation for 3D Scans
+## Data preparation for 3D scans
 
 Since this code is based on [ScanRefer](https://github.com/daveredrum/ScanRefer) and [ScanQA](https://github.com/ATR-DBI/ScanQA), you can use the same 3D features. Please also refer to the ScanRefer and ScanQA data preparation.
 
