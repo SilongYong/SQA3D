@@ -1,4 +1,4 @@
-## Dataset
+## Guide for ScanQA model
 
 ## Data preparation
 
@@ -45,7 +45,6 @@ python sqa_data_2_ScanQA.py
     ```shell
     python scripts/project_multiview_features.py --maxpool
     ```
-## Usage
 
 ### Training
 - `scripts for training` and the models we evaluated in the paper can be found below
