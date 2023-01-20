@@ -49,7 +49,9 @@ cd MCAN
 
 ## License
 
-Apache
+- Code: [Apache](https://github.com/SilongYong/SQA3D/blob/master/LICENSE)
+
+- Data: [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/)
 
 ## Citation
 If you find our work helpful for your research. Please consider citing our paper.
