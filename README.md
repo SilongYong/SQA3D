@@ -40,7 +40,7 @@ Please refer to [data format](assets/dataset.md). Note that we only provide the 
 
 For each model, please refer to [ScanQA](./ScanQA/README.md), [MCAN](./MCAN/README.md), [ClipBERT](./ClipBERT/README.md) for details on how to prepare the scene data and run some experiments.
 
-## Others
+## Misc
 
 Please change to the corresponding directory when running experiments with the models. For example, to experiment with MCAN
 ```shell
