@@ -87,4 +87,4 @@ print('The class label of answer \'table\' is: ', j[0]['table'])
 print('The corresponding answer of class 123 is: ', j[1]['123'])
 ```
 
-4. For ScanQA, MCAN and ClipBERT, the data format should be a little different, please refer to [ScanQA data](../ScanQA/README.md), [MCAN data](../MCAN/README.md), [ClipBERT data](../ClipBERT/README.md) for details.
+4. To obtain the scene representations, please refer to [3D scans for ScanQA](../ScanQA/README.md), [egocentric videos for ClipBERT](../ClipBERT/README.md) and [BEV pictures for MCAN](../MCAN/README.md) for more details.
