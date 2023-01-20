@@ -24,5 +24,5 @@ pip install path/en_core_web_lg-1.2.0.tar.gz
 train_sqa.py --config-file train_sqa_mcan.yaml
 ```
 
-# Acknowledgements
+## Acknowledgements
 We would like to thank [MCAN](https://github.com/MILVLG/mcan-vqa) and [RelViT](https://github.com/NVlabs/RelViT) for their useful code bases.
