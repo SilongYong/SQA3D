@@ -1,6 +1,6 @@
 SQA3D
 ===
-<p align="center"><img width="540" src="./assets/overview.JPG"></p>
+<p align="center"><img width="840" src="./assets/overview.JPG"></p>
 
 This repository hosts the code for the paper:
 
@@ -9,6 +9,10 @@ This repository hosts the code for the paper:
 by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong.github.io/), [Zilong Zheng](https://zilongzheng.github.io/), [Qing Li](https://liqing-ustc.github.io/), [Yitao Liang](https://web.cs.ucla.edu/~yliang/), [Song-Chun Zhu](http://www.stat.ucla.edu/~sczhu/) and [Siyuan Huang](https://siyuanhuang.com/)
 
 [arXiv](http://arxiv.org/abs/2205.13803) | [Benchmark]()
+
+## News
+
+- MM/DD/YYYY: SQA3D data, code and pretrained weights have beed released!
 
 ## Abstract
 
@@ -28,23 +32,24 @@ We propose a new task to benchmark scene understanding of embodied agents: Situa
 
 The code has been tested with Python 3.9, PyTorch 1.12.0 and CUDA 11.3 on Ubuntu 20.04
 
-##  Data Preparation
+##  SQA3D data format
 
-Please refer to [data preparation](assets/dataset.md)
+Please refer to [data format](assets/dataset.md). Note that we only provide the SQA3D annotations. To obtain the scene representations (3D scans, egocentric videos or BEV pictures), please refer to [Training](https://github.com/SilongYong/SQA3D/edit/master/README.md#training).
 
 ## Training
 
-Please refer to [ScanQA](./ScanQA/README.md), [MCAN](./MCAN/README.md), [ClipBERT](./ClipBERT/README.md) for details.
+For each model, please refer to [ScanQA](./ScanQA/README.md), [MCAN](./MCAN/README.md), [ClipBERT](./ClipBERT/README.md) for details on how to prepare the scene data and run some experiments.
 
-## Note
+## Others
 
-When running corresponding model, please
+Please change to the corresponding directory when running experiments with the models. For example, to experiment with MCAN
 ```shell
-PATH = ./MODEL_YOU_WANT_TO_RUN
-cd PATH
+cd MCAN
 ```
 
 ## License
+
+Apache
 
 ## Citation
 If you find our work helpful for your research. Please consider citing our paper.
