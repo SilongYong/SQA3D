@@ -1,4 +1,4 @@
-## Guide for ScanQA model
+# Running ScanQA (model) on SQA3D
 
 ## Data preparation
 
@@ -46,7 +46,7 @@ python sqa_data_2_ScanQA.py
     python scripts/project_multiview_features.py --maxpool
     ```
 
-### Training
+## Training
 - `scripts for training` and the models we evaluated in the paper can be found below
     | `scripts for training`                  |  Model in the paper  |
     |-----------------------------------------|----------------------|
@@ -55,7 +55,7 @@ python sqa_data_2_ScanQA.py
     | `full.sh`                               | `ScanQA`             |
     | `auxi.sh`                               | `ScanQA + aux. task` |
 
-### Evaluation
+## Evaluation
 - Evaluation of trained ScanQA models with the val dataset:
 
   ```shell
