@@ -6,7 +6,7 @@ CONF = EasyDict()
 
 # path
 CONF.PATH = EasyDict()
-CONF.PATH.BASE = "/absolute/path/to/ScanQA" # TODO: change this
+CONF.PATH.BASE = "/path/to/SQA3D_official/ScanQA" # TODO: change this
 
 CONF.PATH.DATA = os.path.join(CONF.PATH.BASE, "data")
 CONF.PATH.SCANNET = os.path.join(CONF.PATH.DATA, "scannet")
