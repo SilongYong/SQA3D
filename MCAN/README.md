@@ -1,6 +1,6 @@
 # Running MCAN on SQA3D
 
-## Data preparation
+## Data preparation for BEV pictures
 
 1. Download [Blender](https://www.blender.org/download/)
 
