@@ -4,7 +4,7 @@ import numpy as np
 import json
 import os
 
-modes = ["BEV"]
+modes = ["bird"]
 
 data_version = "balanced"
 splits = ["train", 'val', 'test']
@@ -72,7 +72,7 @@ for split in splits:
             cam = bpy.data.objects['Camera']
             cam.rotation_mode = 'QUATERNION'
             for mode in modes: 
-                if mode == "BEV":
+                if mode == "bird":
                     if scene_name in scene_processed:
                         continue
                     if os.path.exists(os.path.join(output_dir, mode, str(scene_name) + f"_{mode}.png")):

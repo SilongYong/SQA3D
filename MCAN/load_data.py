@@ -56,7 +56,7 @@ class DataSet(Data.Dataset):
             a = self.answer2class[a]
     
         ques_ix_iter = proc_ques(question, self.token_to_ix, self.flags.MAX_TOKEN)
-        img = Image.open(os.path.join(self.flags.img_dir, f"{scene_id}_BEV.png")).convert('RGB')
+        img = Image.open(os.path.join(self.flags.img_dir, f"{scene_id}_bird.png")).convert('RGB')
         img = self.transform(img)
         return img, torch.from_numpy(ques_ix_iter), torch.from_numpy(np.array(a)).unsqueeze(0), q_type_id
             

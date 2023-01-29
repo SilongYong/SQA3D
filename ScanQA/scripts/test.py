@@ -16,6 +16,7 @@ sys.path.append(os.path.join(os.getcwd())) # HACK add the root folder
 from lib.sepdataset import ScannetQADataset, ScannetQADatasetConfig
 from lib.config import CONF 
 from models.sqa_module import ScanQA
+from collections import OrderedDict
 
 # constants
 DC = ScannetQADatasetConfig()
@@ -104,6 +105,9 @@ def parse_option():
     parser.add_argument("--aux", action="store_true", help="USE auxiliary task")
     parser.add_argument("--Hpos", type=float, default=1.0, help="position loss weight")
     parser.add_argument("--Hrot", type=float, default=1.0, help="rotation loss weight")
+
+    ## which split to evaluate
+    parser.add_argument("--split", type=str, choices=['train', 'val', 'test'], default='train')
     
     ## checkpoint
     parser.add_argument("--ckpt", type=str, help="checkpoint to evaluate")
@@ -313,10 +317,11 @@ def get_scannet_scene_list(split):
     scene_list = sorted([line.rstrip() for line in open(os.path.join(CONF.PATH.SCANNET_META, "scannetv2_{}.txt".format(split)))])
     return scene_list
 
-def get_sqa(sqa_train, sqa_val, train_num_scenes, val_num_scenes):
+def get_sqa(sqa_train, sqa_val, sqa_test, train_num_scenes, val_num_scenes, test_num_scenes):
     # get initial scene list
     train_scene_list = sorted(list(set([data["scene_id"] for data in sqa_train])))
     val_scene_list = sorted(list(set([data["scene_id"] for data in sqa_val])))
+    test_scene_list = sorted(list(set([data["scene_id"] for data in sqa_test])))
     # set train_num_scenes
     if train_num_scenes <= -1: 
         train_num_scenes = len(train_scene_list)
@@ -345,22 +350,43 @@ def get_sqa(sqa_train, sqa_val, train_num_scenes, val_num_scenes):
     for data in sqa_val:
         if data["scene_id"] in val_scene_list:
             new_sqa_val.append(data)
+    
+    # set val_num_scenes
+    if test_num_scenes <= -1: 
+        test_num_scenes = len(test_scene_list)
+    else:
+        assert len(test_scene_list) >= test_num_scenes
+
+    # slice val_scene_list
+    test_scene_list = test_scene_list[:test_num_scenes]        
+    
+    new_sqa_test = []
+    for data in sqa_test:
+        if data["scene_id"] in test_scene_list:
+            new_sqa_test.append(data)
 
     # all sqa scene
-    all_scene_list = train_scene_list + val_scene_list
-    return new_sqa_train, new_sqa_val, all_scene_list
+    all_scene_list = train_scene_list + val_scene_list + test_scene_list
+    return new_sqa_train, new_sqa_val, new_sqa_test, all_scene_list
 
-def test(args, SQA_TRAIN, SQA_VAL, path, answer_counter_list):
+def test(args, SQA_TRAIN, SQA_VAL, SQA_TEST, path, answer_counter_list):
 
-    sqa_train, sqa_val, all_scene_list = get_sqa(SQA_TRAIN, SQA_VAL, args.train_num_scenes, args.val_num_scenes)
+    sqa_train, sqa_val, sqa_test, all_scene_list = get_sqa(SQA_TRAIN, SQA_VAL, SQA_TEST, args.train_num_scenes, args.val_num_scenes, args.test_num_scenes)
     sqa = {
-        "val" : sqa_val
+        "train" : sqa_train,
+        "val" : sqa_val,
+        "test" : sqa_test
     }
-    val_dataset, val_dataloader = get_dataloader(args, sqa, all_scene_list, "val", DC, False, answer_counter_list, test=True)
-    ckpt = torch.load(os.path.join(path, "model.pth"), map_location="cuda:0")
-    for key in ckpt.keys():
-        if key in ["lang_cls"]:
-            key = "aux_reg"
+    val_dataset, val_dataloader = get_dataloader(args, sqa, all_scene_list, args.split, DC, False, answer_counter_list, test=True)
+
+    ckpt = torch.load(path, map_location="cuda:0")
+    new_ckpt = OrderedDict()
+    # for key in ckpt.keys():                  # for pretrained models
+    #     if "lang_cls" in key:
+    #         newkey = key.replace("lang_cls", "aux_reg")
+    #         new_ckpt[newkey] = ckpt[key]
+    #     else:
+    #         new_ckpt[key] = ckpt[key]
     
     model = get_model(args, DC)
 
@@ -393,7 +419,7 @@ def test(args, SQA_TRAIN, SQA_VAL, path, answer_counter_list):
             if pred_answer == gt_answer:
                 right_count += 1
             count += 1
-        print("over all acc:", right_count / count)
+        print("overall acc:", right_count / count)
 
     return right_count / count
 
@@ -404,6 +430,7 @@ if __name__ == "__main__":
     project_name = "SQA"
     SQA_TRAIN = json.load(open(os.path.join(CONF.PATH.SQA, project_name + "_train.json"))) 
     SQA_VAL = json.load(open(os.path.join(CONF.PATH.SQA, project_name + "_val.json")))
+    SQA_TEST = json.load(open(os.path.join(CONF.PATH.SQA, project_name + "_test.json")))
     answer_counter_list = json.load(open(os.path.join(CONF.PATH.SQA, "answer_counter.json")))
     torch.cuda.set_device('cuda:{}'.format(args.gpu))
     os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
@@ -416,7 +443,5 @@ if __name__ == "__main__":
     torch.backends.cudnn.benchmark = False
     np.random.seed(args.seed)
     path = args.ckpt
-    save_list = test(args, SQA_TRAIN, SQA_VAL, path, answer_counter_list)
-    with open(f"trn_som_res.json", "w") as f:
-        json.dump(save_list, f)
+    save_list = test(args, SQA_TRAIN, SQA_VAL, SQA_TEST, path, answer_counter_list)
     
