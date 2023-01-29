@@ -1,10 +1,10 @@
 SQA3D
 ===
-<p align="center"><img width="840" src="./assets/overview.JPG"></p>
+<p align="center"><img width="740" src="./assets/overview.JPG"></p>
 
 This repository hosts the code for the paper:
 
-[SQA3D: Situated Question Answering in 3D Scenes](https://arxiv.org/pdf/2210.07474.pdf)
+[SQA3D: Situated Question Answering in 3D Scenes (ICLR 2023)](https://arxiv.org/pdf/2210.07474.pdf)
 
 by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong.github.io/), [Zilong Zheng](https://zilongzheng.github.io/), [Qing Li](https://liqing-ustc.github.io/), [Yitao Liang](https://web.cs.ucla.edu/~yliang/), [Song-Chun Zhu](http://www.stat.ucla.edu/~sczhu/) and [Siyuan Huang](https://siyuanhuang.com/)
 
@@ -34,7 +34,7 @@ The code has been tested with Python 3.9, PyTorch 1.12.0 and CUDA 11.3 on Ubuntu
 
 ##  SQA3D data format
 
-Please refer to [data format](assets/dataset.md). Note that we only provide the SQA3D annotations. To obtain the scene representations (3D scans, egocentric videos or BEV pictures), please refer to [Training](https://github.com/SilongYong/SQA3D/edit/master/README.md#training).
+Please refer to [data format](assets/dataset.md). Note that we only provide the SQA3D annotations. To obtain the scene data (3D scans, egocentric videos or BEV pictures), please refer to [Training](https://github.com/SilongYong/SQA3D#training).
 
 ## Training
 
@@ -56,10 +56,11 @@ cd MCAN
 ## Citation
 If you find our work helpful for your research. Please consider citing our paper.
 ```bibtex
-@article{ma2022sqa3d,
+@inproceedings{ma2022sqa3d,
   title={SQA3D: Situated Question Answering in 3D Scenes},
   author={Ma, Xiaojian and Yong, Silong and Zheng, Zilong and Li, Qing and Liang, Yitao and Zhu, Song-Chun and Huang, Siyuan},
-  journal={arXiv preprint arXiv:2210.07474},
-  year={2022}
+  booktitle={International Conference on Learning Representations},
+  year={2023},
+  url={https://openreview.net/forum?id=IDJx97BC38}
 }
 ```
