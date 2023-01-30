@@ -12,7 +12,7 @@ by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong
 
 ## News
 
-- MM/DD/YYYY: SQA3D data, code and pretrained weights have beed released!
+- 01/30/2023: SQA3D data, code and pretrained weights have beed released!
 
 ## Abstract
 
