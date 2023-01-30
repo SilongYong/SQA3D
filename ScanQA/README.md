@@ -68,7 +68,7 @@ python sqa_data_2_ScanQA.py
 
 ## Pretrained models
 - Pretrained models can be downloaded [here](https://drive.google.com/drive/folders/1WJlvLUslAOwe846oJ1W4kpmck_SlkPUR?usp=share_link). The correspondence between the models and the results in the paper is as follows
-    | `models`                                 |  Model in the paper  | results |
+    | models                                   |  Model in the paper  | results |
     |------------------------------------------|----------------------|---------|
     | `wo3d.pth`                               | `Blind test`         |  43.65  |
     | `wos.pth`                                | `ScanQA (w/o s_txt)` |  45.27  |
