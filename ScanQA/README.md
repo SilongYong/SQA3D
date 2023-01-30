@@ -19,16 +19,17 @@ python sqa_data_2_ScanQA.py
     "question": [...],
     "answers": [...],
     ```
-
-2. Download the preprocessed [GLoVE embedding](http://kaldir.vc.in.tum.de/glove.p) and put them under `../data/`.
-3. Download the ScanNetV2 dataset and put (or link) `scans/` under (or to) `data/scannet/scans/` (Please follow the [ScanNet Instructions](data/scannet/README.md) for downloading the ScanNet dataset).
-4. Pre-process ScanNet data. A folder named `scannet_data/` will be generated under `data/scannet/` after running the following command:
+2. (Optional) You can download our preprocessed [SQA_data_in_ScanQA_format](https://zenodo.org/record/7544818/files/ScanQA_format.zip?download=1) in `./data/qa`
+3. Download [answer_counter.json](https://zenodo.org/record/7544818/files/answer_counter.json?download=1) into ./data/qa, this is the file that contains all answers corresponding to all questions in the dataset.
+4. Download the preprocessed [GLoVE embedding](http://kaldir.vc.in.tum.de/glove.p) and put them under `../data/`.
+5. Download the ScanNetV2 dataset and put (or link) `scans/` under (or to) `data/scannet/scans/` (Please follow the [ScanNet Instructions](data/scannet/README.md) for downloading the ScanNet dataset).
+6. Pre-process ScanNet data. A folder named `scannet_data/` will be generated under `data/scannet/` after running the following command:
     ```shell
     cd data/scannet/
     python batch_load_scannet_data.py
     ```
 
-5. (Optional) Pre-process the multiview features from ENet. 
+7. (Optional) Pre-process the multiview features from ENet. 
 
     a. Download [the ENet pretrained weights](http://kaldir.vc.in.tum.de/ScanRefer/scannetv2_enet.pth) and put it under `data/`
     
@@ -59,11 +60,21 @@ python sqa_data_2_ScanQA.py
 - Evaluation of trained ScanQA models with the val dataset:
 
   ```shell
-  python scripts/test.py --ckpt <folder_name> <--option>
+  python scripts/test.py --ckpt <model_path>  --split <train_val_or_test> <--option>
   ```
 
-  <folder_name> corresponds to the folder under outputs/ with the timestamp + <tag_name>.
+  <model_path> corresponds to the path to the model.
   <--option> corresponds to the option used when training
+
+## Pretrained models
+- Pretrained models can be downloaded [here](https://drive.google.com/drive/folders/1WJlvLUslAOwe846oJ1W4kpmck_SlkPUR?usp=share_link). The correspondence between the models and the results in the paper is as follows
+    | `models`                                 |  Model in the paper  | results |
+    |------------------------------------------|----------------------|---------|
+    | `wo3d.pth`                               | `Blind test`         |  43.65  |
+    | `wos.pth`                                | `ScanQA (w/o s_txt)` |  45.27  |
+    | `full.pth`                               | `ScanQA`             |  46.58  |
+    | `auxi.pth`                               | `ScanQA + aux. task` |  47.20  |
+Note that due to the slight change of codebase, the results evaluated might be slightly different from the results in the paper(no more than 0.2%).
 
 ## Acknowledgements
 We would like to thank [ScanQA](https://github.com/ATR-DBI/ScanQA) for the useful code base.

@@ -11,7 +11,7 @@
 cd ../utils
 blender -b file.blend --python mesh2img.py
 ``` 
-For convenience, you can download the images rendered by us from [here]()
+For convenience, you can download the images rendered by us from [here](https://zenodo.org/record/7544818/files/bird.zip?download=1)
 
 4. Download the pretrained vision backbones and other files from [here](https://drive.google.com/file/d/1pxmUxkk5t8Bg_cS_jdaQgugCqYddZInE/view?usp=sharing) and extract them to `./cache`
 5. Download the preprocessed [SpaCy embedding](en_vectors_web_lg) and then run

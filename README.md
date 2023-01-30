@@ -8,7 +8,7 @@ This repository hosts the code for the paper:
 
 by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong.github.io/), [Zilong Zheng](https://zilongzheng.github.io/), [Qing Li](https://liqing-ustc.github.io/), [Yitao Liang](https://web.cs.ucla.edu/~yliang/), [Song-Chun Zhu](http://www.stat.ucla.edu/~sczhu/) and [Siyuan Huang](https://siyuanhuang.com/)
 
-[arXiv](http://arxiv.org/abs/2205.13803) | [Benchmark]()
+[arXiv](http://arxiv.org/abs/2205.13803)
 
 ## News
 
@@ -34,7 +34,7 @@ The code has been tested with Python 3.9, PyTorch 1.12.0 and CUDA 11.3 on Ubuntu
 
 ##  SQA3D data format
 
-Please refer to [data format](assets/dataset.md). Note that we only provide the SQA3D annotations. To obtain the scene data (3D scans, egocentric videos or BEV pictures), please refer to [Training](https://github.com/SilongYong/SQA3D#training).
+Please refer to [data format](assets/dataset.md). Note that we only provide the SQA3D annotations. To obtain the scene data (3D scans, egocentric videos or BEV pictures), please refer to [Training](https://github.com/SilongYong/SQA3D#training). SQA3D data is hosted [here](https://zenodo.org/record/7544818#.Y9eBMMlBx3g)
 
 ## Training
 

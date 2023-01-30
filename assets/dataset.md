@@ -1,6 +1,6 @@
 SQA3D data
 ===
-1. Download the [SQA3D dataset]() under `assets/data/`. The following files should be used:
+1. Download the [SQA3D dataset](https://zenodo.org/record/7544818/files/sqa_task.zip?download=1) under `assets/data/`. The following files should be used:
 ```plain
 ./assets/data/sqa_task/balanced/*
 ./assets/data/sqa_task/answer_dict.json
