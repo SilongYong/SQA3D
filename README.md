@@ -11,7 +11,7 @@ by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong
 [🔥Submit your result to PwC!](https://paperswithcode.com/dataset/sqa3d) | [arXiv](https://arxiv.org/abs/2210.07474) | [slides](http://web.cs.ucla.edu/~xm/file/sqa3d_iclr23_slides.pdf) | [Project page](https://sqa3d.github.io/)
 
 ## News
-
+- 02/07/2023: Official project page is launched!
 - 01/30/2023: SQA3D data, code and pretrained weights have beed released!
 
 ## Abstract
