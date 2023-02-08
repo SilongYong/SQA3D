@@ -356,7 +356,7 @@ def main_worker(gpu, ngpus_per_node, argss):
             torch.save(ckpt, filename)
         acc_test = 0
         if epoch_log % config['eval_epoch'] == 0:
-            ret = test(test_loader, model, epoch_log, args)
+            ret = test(test_loader, model, args)
             if ret is None:
                 return 0
             else:
