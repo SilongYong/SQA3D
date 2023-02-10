@@ -4,6 +4,8 @@
 
 Since this code is based on [ScanRefer](https://github.com/daveredrum/ScanRefer) and [ScanQA](https://github.com/ATR-DBI/ScanQA), you can use the same 3D features. Please also refer to the ScanRefer and ScanQA data preparation.
 
+Before we start, make sure you are now in `/path/to/SQA3D/ScanQA`.
+
 1. Use the following command to transform data into the format ScanQA model needs.
 ```shell
 cd ../utils
@@ -19,17 +21,22 @@ python sqa_data_2_ScanQA.py
     "question": [...],
     "answers": [...],
     ```
-2. (Optional) You can download our preprocessed [SQA_data_in_ScanQA_format](https://zenodo.org/record/7544818/files/ScanQA_format.zip?download=1) in `./data/qa`
-3. Download [answer_counter.json](https://zenodo.org/record/7544818/files/answer_counter.json?download=1) into ./data/qa, this is the file that contains all answers corresponding to all questions in the dataset.
-4. Download the preprocessed [GLoVE embedding](http://kaldir.vc.in.tum.de/glove.p) and put them under `../data/`.
-5. Download the ScanNetV2 dataset and put (or link) `scans/` under (or to) `data/scannet/scans/` (Please follow the [ScanNet Instructions](data/scannet/README.md) for downloading the ScanNet dataset).
-6. Pre-process ScanNet data. A folder named `scannet_data/` will be generated under `data/scannet/` after running the following command:
+2. (Optional) You can download our preprocessed [SQA_data_in_ScanQA_format](https://zenodo.org/record/7544818/files/ScanQA_format.zip?download=1) in `data/qa`
+3. Download [answer_counter.json](https://zenodo.org/record/7544818/files/answer_counter.json?download=1) into data/qa, this is the file that contains all answers corresponding to all questions in the dataset.
+4. Download the preprocessed [GLoVE embedding](http://kaldir.vc.in.tum.de/glove.p) and put them under `data/`.
+5. Link the scannet utils to the current directory
+    ```bash
+    ln -s ../assets/data/scannet data/.
+    ```
+
+6. Download the ScanNetV2 dataset and link `scans/` to `data/scannet/scans/` (Please follow the [ScanNet Instructions](../assets/data/scannet/README.md) for downloading the ScanNet dataset).
+7. Pre-process ScanNet data. A folder named `scannet_data/` will be generated under `data/scannet/` after running the following command:
     ```shell
     cd data/scannet/
     python batch_load_scannet_data.py
     ```
 
-7. (Optional) Pre-process the multiview features from ENet. 
+8. (Optional) Pre-process the multiview features from ENet. 
 
     a. Download [the ENet pretrained weights](http://kaldir.vc.in.tum.de/ScanRefer/scannetv2_enet.pth) and put it under `data/`
     
@@ -46,6 +53,8 @@ python sqa_data_2_ScanQA.py
     ```shell
     python scripts/project_multiview_features.py --maxpool
     ```
+
+9. Change `CONF.PATH.BASE` in `lib/config.py` to the absolute path of the current diretory (ex. `/home/test/workspace/SQA3D/ScanQA`).
 
 ## Training
 - `scripts for training` and the models we evaluated in the paper can be found below
