@@ -22,8 +22,10 @@ We propose a new task to benchmark scene understanding of embodied agents: Situa
 
 - Install PyTorch:
     ```shell
-    conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+    conda install pytorch=1.12.0 torchvision torchaudio cudatoolkit=11.3 -c pytorch
     ```
+
+- Install [pointnet2](https://github.com/daveredrum/Pointnet2.ScanNet), please follow the instruction there.
 
 - Install the necessary packages with `requirements.txt`:
     ```shell
