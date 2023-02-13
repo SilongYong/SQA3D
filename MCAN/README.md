@@ -24,5 +24,18 @@ pip install path/en_core_web_lg-1.2.0.tar.gz
 train_sqa.py --config-file train_sqa_mcan.yaml
 ```
 
+## Evaluation
+```python
+train_sqa.py --test_only --config-file train_sqa_mcan.yaml --test_model <model_path>
+```
+<model_path> corresponds to the path to the model.
+
+## Pretrained models
+- Pretrained models can be downloaded [here](https://drive.google.com/drive/folders/1WJlvLUslAOwe846oJ1W4kpmck_SlkPUR?usp=share_link). The correspondence between the models and the results in the paper is as follows
+    | models                                   |  Model in the paper  | results |
+    |------------------------------------------|----------------------|---------|
+    | `MCAN.pth`                               | `MCAN`               |  43.42  |
+Note that due to the slight change of codebase, the results evaluated is slightly higher than presented in the paper(around 1%).
+
 ## Acknowledgements
 We would like to thank [MCAN](https://github.com/MILVLG/mcan-vqa) and [RelViT](https://github.com/NVlabs/RelViT) for their useful code bases.

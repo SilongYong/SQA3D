@@ -195,7 +195,10 @@ def main_worker(gpu, ngpus_per_node, argss):
     )
 
     # testing
-    test_dataset = DataSet(dataset_flags, 'val')
+    if args.test_only:
+        test_dataset = DataSet(dataset_flags, 'test')
+    else:
+        test_dataset = DataSet(dataset_flags, 'val')
     if utils.is_main_process():
         utils.log('test dataset: {} samples'.format(len(test_dataset)))
     if args.distributed:
