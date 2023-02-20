@@ -270,11 +270,7 @@ def get_loss(data_dict, config, detection=True, use_aux_regressor=False, use_ans
         data_dict["answer_loss"] = torch.zeros(1)[0].cuda()
 
 
-    #if use_aux_regressor:
-    if use_aux_regressor:
-        data_dict["aux_loss"] = compute_aux_regression_loss(data_dict)
-    else:
-        data_dict["aux_loss"] = torch.zeros(1)[0].cuda()
+    data_dict["aux_loss"] = torch.zeros(1)[0].cuda()
 
     
     loss = loss_weights.get('vote_loss', 1.) * data_dict['vote_loss'] \

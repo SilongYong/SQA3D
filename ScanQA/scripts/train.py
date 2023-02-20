@@ -99,7 +99,6 @@ def parse_option():
     ## Ablation
     parser.add_argument("--wo3d", action="store_true", help="DO NOT use 3D branch")
     parser.add_argument("--wos", action="store_true", help="DO NOT use situation")
-    parser.add_argument("--aux", action="store_true", help="USE auxiliary task")
     parser.add_argument("--Hpos", type=float, default=1.0, help="position loss weight")
     parser.add_argument("--Hrot", type=float, default=1.0, help="rotation loss weight")
     args = parser.parse_args()
@@ -204,7 +203,7 @@ def get_num_params(model):
 def get_solver(args, dataloader):
     model = get_model(args, DC)
     #wandb.watch(model, log_freq=100)
-    if args.aux:
+    if not args.no_aux_reg:
         from lib.solver_aux import Solver
     else:
         from lib.solver import Solver
