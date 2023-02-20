@@ -1,4 +1,4 @@
-""" 
+"""
 Modified from: https://github.com/daveredrum/ScanRefer/blob/master/lib/solver.py
 """
 
@@ -84,17 +84,16 @@ BEST_REPORT_TEMPLATE = """
 """
 
 LOG_SCORE_KEYS = {
-    "loss": ["loss", "vote_loss", "objectness_loss", "box_loss", "sem_cls_loss", "aux_loss", "answer_loss"],
+    "loss": ["loss", "vote_loss", "objectness_loss", "box_loss", "sem_cls_loss", "aux_loss", "answer_loss", "rot_loss", "pos_loss"],
     "score": ["answer_acc_at1", "answer_acc_at10"]
 }
 
 class Solver():
-    def __init__(self, model, config, dataloader, optimizer, stamp, val_step=10, 
-                cur_criterion="answer_acc_at1", detection=True, use_aux_regressor=True, use_answer=True, 
-                max_grad_norm=None, lr_decay_step=None, lr_decay_rate=None, bn_decay_step=None, bn_decay_rate=None, loss_weights=None, loss_pos=None, loss_rot=None
+    def __init__(self, model, config, dataloader, optimizer, stamp, val_step=10,
+                cur_criterion="answer_acc_at1", detection=True, use_aux_situation=True, use_answer=True,
+                max_grad_norm=None, lr_decay_step=None, lr_decay_rate=None, bn_decay_step=None, bn_decay_rate=None, loss_weights=None, loss_weight_pos=None, loss_weight_rot=None
     ):
 
-        self.get_loss = get_loss
         self.epoch = 0
         self.verbose = 0
         self.model = model
@@ -113,7 +112,7 @@ class Solver():
 
         self.detection = detection
         self.use_answer = use_answer
-        self.use_aux_regressor = use_aux_regressor
+        self.use_aux_situation = use_aux_situation
 
         self.max_grad_norm = max_grad_norm
         self.lr_decay_step = lr_decay_step
@@ -122,6 +121,9 @@ class Solver():
         self.bn_decay_rate = bn_decay_rate
 
         self.loss_weights = loss_weights
+        self.loss_weight_pos = loss_weight_pos
+        self.loss_weight_rot = loss_weight_rot
+
         self.best = {
             "epoch": 0,
             "loss": float("inf"),
@@ -130,9 +132,9 @@ class Solver():
             "objectness_loss": float("inf"),
             "vote_loss": float("inf"),
             "box_loss": float("inf"),
-            "sem_cls_loss": float("inf"),            
+            "sem_cls_loss": float("inf"),
             "answer_acc_at1": -float("inf"),
-            "answer_acc_at10": -float("inf"),           
+            "answer_acc_at10": -float("inf"),
         }
 
         # init log
@@ -141,7 +143,7 @@ class Solver():
             "train": {},
             "val": {}
         }
-        
+
         # tensorboard
         os.makedirs(os.path.join(CONF.PATH.OUTPUT, stamp, "tensorboard/train"), exist_ok=True)
         os.makedirs(os.path.join(CONF.PATH.OUTPUT, stamp, "tensorboard/val"), exist_ok=True)
@@ -197,7 +199,7 @@ class Solver():
         for epoch_id in range(epoch):
             try:
                 self._log("epoch {} starting...".format(epoch_id + 1))
-                # feed 
+                # feed
                 self._feed(self.dataloader["train"], "train", epoch_id)
 
                 self._log("saving last models...\n")
@@ -213,7 +215,7 @@ class Solver():
                 if self.bn_scheduler:
                     print("update batch normalization momentum --> {}\n".format(self.bn_scheduler.lmbd(self.bn_scheduler.last_epoch)))
                     self.bn_scheduler.step()
-                
+
             except KeyboardInterrupt:
                 # finish training
                 self._finish(epoch_id)
@@ -223,11 +225,11 @@ class Solver():
         self._finish(epoch_id)
 
     def _start(self):
-        # save commandline 
+        # save commandline
         cmd = " ".join([v for v in sys.argv])
         cmd_file = os.path.join(CONF.PATH.OUTPUT, self.stamp, "cmdline.txt")
         open(cmd_file, 'w').write(cmd)
-        # wandb.save(cmd_file)   
+        # wandb.save(cmd_file)
 
     def _log(self, info_str):
         self.log_fout.write(info_str + "\n")
@@ -250,6 +252,8 @@ class Solver():
             "vote_loss": [],
             "box_loss": [],
             "sem_cls_loss": [],
+            "pos_loss": [],
+            "rot_loss": [],
             # scores
             "answer_acc_at1": [],
             "answer_acc_at10": [],
@@ -283,13 +287,15 @@ class Solver():
         self.optimizer.step()
 
     def _compute_loss(self, data_dict):
-        _, data_dict = self.get_loss(
+        _, data_dict = get_loss(
             data_dict=data_dict,
             config=self.config,
             detection=self.detection,
             use_answer=self.use_answer,
-            use_aux_regressor=self.use_aux_regressor,
+            use_aux_situation=self.use_aux_situation,
             loss_weights=self.loss_weights,
+            loss_weight_pos=self.loss_weight_pos,
+            loss_weight_rot=self.loss_weight_rot,
         )
         # dump
         self._running_log["answer_loss"] = data_dict["answer_loss"]
@@ -299,19 +305,20 @@ class Solver():
         self._running_log["box_loss"] = data_dict["box_loss"]
         self._running_log["sem_cls_loss"] = data_dict["sem_cls_loss"]
         self._running_log["loss"] = data_dict["loss"]
+        self._running_log["pos_loss"] = data_dict["pos_loss"]
+        self._running_log["rot_loss"] = data_dict["rot_loss"]
 
     def _eval(self, data_dict):
         data_dict = get_eval(
             data_dict=data_dict,
             config=self.config,
-            answer_vocab=self.dataloader["train"].dataset.answer_vocab, 
-            use_aux_regressor=self.use_aux_regressor
+            answer_vocab=self.dataloader["train"].dataset.answer_vocab,
+            use_aux_situation=self.use_aux_situation
         )
 
-        # dump   
+        # dump
         self._running_log["answer_acc_at1"] = data_dict["answer_acc_at1"].item()
         self._running_log["answer_acc_at10"] = data_dict["answer_acc_at10"].item()
-
 
     def _feed(self, dataloader, phase, epoch_id):
         # switch mode
@@ -342,10 +349,12 @@ class Solver():
                 "objectness_loss": 0,
                 "vote_loss": 0,
                 "box_loss": 0,
-                "sem_cls_loss": 0, 
+                "sem_cls_loss": 0,
+                "pos_loss":0,
+                "rot_loss":0,
                 # score
-                "answer_acc_at1": 0, 
-                "answer_acc_at10": 0,                                
+                "answer_acc_at1": 0,
+                "answer_acc_at10": 0,
             }
 
             # load
@@ -391,7 +400,7 @@ class Solver():
                 iter_time += self.log[phase]["backward"][-1]
                 iter_time += self.log[phase]["eval"][-1]
                 self.log[phase]["iter_time"].append(iter_time)
-                
+
                 if (self._global_iter_id + 1) % self.verbose == 0:
                     self._train_report(epoch_id)
 
@@ -407,12 +416,12 @@ class Solver():
                 # dump log
                 self._dump_log("train")
                 self._global_iter_id += 1
-        
+
         # check best
         if phase == "val":
             cur_best = np.mean(self.log[phase][self.cur_criterion])
             if cur_best > self.best[self.cur_criterion]:
-                self._log("best val_{} achieved: {}".format(self.cur_criterion, cur_best))
+                self._log("best val_{} achieved: {}".format(self.cur_criterion, np.abs(cur_best)))
                 self._log("current train_loss: {}".format(np.mean(self.log["train"]["loss"])))
                 self._log("current val_loss: {}".format(np.mean(self.log["val"]["loss"])))
                 self.best["epoch"] = epoch_id + 1
@@ -427,14 +436,14 @@ class Solver():
 
                 # save model
                 self._log("saving best models...\n")
-                model_root = os.path.join(CONF.PATH.OUTPUT, self.stamp)                
+                model_root = os.path.join(CONF.PATH.OUTPUT, self.stamp)
 
                 if "pred_answer" in self.log[phase]:
                     pred_answer_idxs = self.log[phase]["pred_answer"]
                     pred_answers = [self.dataloader["val"].dataset.answer_vocab.itos(pred_answer_idx) for pred_answer_idx in pred_answer_idxs]
 
                     qa_id_df = pd.DataFrame([self.log[phase]["scene_id"], self.log[phase]["question_id"]]).T
-                    qa_id_df.columns = ["scene_id", "question_id"]                    
+                    qa_id_df.columns = ["scene_id", "question_id"]
                     pred_ansewr_df = pd.DataFrame([pred_answer_idxs, pred_answers]).T
                     pred_ansewr_df.columns = ["pred_answer_idx", "pred_answer"]
 
@@ -456,9 +465,6 @@ class Solver():
                     value,
                     self._global_iter_id
                 )
-                # if phase == "train":
-                    # for name, params in self.model.named_parameters():
-                    #     self._log_writer[phase].add_histogram(name, params.cpu(), self._global_iter_id)
                 # WandB
                 # phase, key, item -> val/score/ref_acc
                 # wandb.log({"{}/{}/{}".format(phase, loss_or_score, key): value}, step=self._global_iter_id)
@@ -515,7 +521,7 @@ class Solver():
         iter_report_dic["mean_iter_time"] = round(np.mean(iter_time), 5)
         iter_report_dic["eta_h"]=eta["h"]
         iter_report_dic["eta_m"]=eta["m"]
-        iter_report_dic["eta_s"]=eta["s"]        
+        iter_report_dic["eta_s"]=eta["s"]
 
         iter_report = self.__iter_report_template.format(**iter_report_dic)
         self._log(iter_report)

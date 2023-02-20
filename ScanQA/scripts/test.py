@@ -14,6 +14,7 @@ from scipy.spatial.transform import Rotation as R
 
 sys.path.append(os.path.join(os.getcwd())) # HACK add the root folder
 from lib.sepdataset import ScannetQADataset, ScannetQADatasetConfig
+from lib.solver import Solver
 from lib.config import CONF
 from models.sqa_module import ScanQA
 from collections import OrderedDict
@@ -69,7 +70,6 @@ def parse_option():
     parser.add_argument("--use_seed_lang", action="store_true", help="Fuse seed feature and language feature.")
     ## module option
     parser.add_argument("--no_object_mask", action="store_true", help="objectness_mask for qa")
-    parser.add_argument("--no_aux_reg", action="store_true", help="Do NOT use auxiliary task regressor.")
     parser.add_argument("--no_answer", action="store_true", help="Do NOT train the localization module.")
     parser.add_argument("--no_detection", action="store_true", help="Do NOT train the detection module.")
     # Pretrain
@@ -195,7 +195,7 @@ def get_model(args, config):
         hidden_size=args.hidden_size,
         # option
         use_object_mask=(not args.no_object_mask),
-        use_aux_reg=(not args.no_aux_reg),
+        use_aux_situation=args.use_aux_situation,
         use_answer=(not args.no_answer),
         wo3d = args.wo3d,
     )
@@ -215,10 +215,6 @@ def get_num_params(model):
 def get_solver(args, dataloader):
     model = get_model(args, DC)
     #wandb.watch(model, log_freq=100)
-    if args.aux:
-        from lib.solver_aux import Solver
-    else:
-        from lib.solver import Solver
     if args.optim_name == 'adam':
         model_params = [{"params": model.parameters()}]
         optimizer = optim.Adam(
@@ -279,15 +275,15 @@ def get_solver(args, dataloader):
         detection=not args.no_detection,
         use_reference=not args.no_reference,
         use_answer=not args.no_answer,
-        use_aux_regressor=not args.no_aux_reg,
+        use_aux_situation=args.use_aux_situation,
         max_grad_norm=args.max_grad_norm,
         lr_decay_step=args.lr_decay_step,
         lr_decay_rate=args.lr_decay_rate,
         bn_decay_step=args.bn_decay_step,
         bn_decay_rate=args.bn_decay_rate,
         loss_weights=loss_weights,
-        loss_pos = args.Hpos,
-        loss_rot = args.Hrot,
+        loss_weight_pos = args.Hpos,
+        loss_weight_rot = args.Hrot,
     )
     num_params = get_num_params(model)
 

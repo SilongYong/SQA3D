@@ -33,7 +33,7 @@ class ScanQA(nn.Module):
         hidden_size=128,
         # option
         use_object_mask=False,
-        use_aux_reg=False,
+        use_aux_situation=False,
         use_answer=False,
         num_pos=7,
         wo3d=False,
@@ -43,7 +43,7 @@ class ScanQA(nn.Module):
 
         # Option
         self.use_object_mask = use_object_mask
-        self.use_aux_reg = use_aux_reg
+        self.use_aux_situation = use_aux_situation
         self.use_answer = use_answer
         self.wo3d = wo3d
         lang_size = hidden_size * (1 + lang_use_bidir)
@@ -241,7 +241,7 @@ class ScanQA(nn.Module):
         #           LANGUAGE BRANCH           #
         #                                     #
         #######################################
-        if self.use_aux_reg:
+        if self.use_aux_situation:
             assert self.wo3d is False
             temp = torch.cat((s_feat, object_feat), dim=1)
             data_dict["aux_scores"] = self.aux_reg(temp)

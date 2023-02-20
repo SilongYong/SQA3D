@@ -191,9 +191,14 @@ def compute_box_and_sem_cls_loss(data_dict, config):
 
     return center_loss, heading_class_loss, heading_residual_normalized_loss, size_class_loss, size_residual_normalized_loss, sem_cls_loss
 
-def compute_aux_regression_loss(data_dict):
-    loss_aux = F.cross_entropy(data_dict["aux_scores"], data_dict["auxiliary_task"])
-    return loss_aux
+def compute_aux_situation_loss(data_dict, loss_weight_pos, loss_weight_rot):
+
+    loss_position = F.mse_loss(data_dict["aux_scores"][:, : 3], data_dict["auxiliary_task"][:, : 3], reduction="mean")
+    loss_quaternion = F.mse_loss(data_dict["aux_scores"][:, 3 : ], data_dict["auxiliary_task"][:, 3 : ], reduction="mean")
+    loss_aux = loss_weight_pos * loss_position + loss_weight_rot * loss_quaternion
+    data_dict["pos_loss"] = loss_position
+    data_dict["rot_loss"] = loss_quaternion
+    return loss_aux, data_dict
 
 
 def compute_answer_classification_loss(data_dict):
@@ -213,7 +218,7 @@ def compute_answer_classification_loss(data_dict):
     return loss_answer
 
 
-def get_loss(data_dict, config, detection=True, use_aux_regressor=False, use_answer=True, loss_weights=None):
+def get_loss(data_dict, config, detection=True, use_aux_situation=False, use_answer=True, loss_weights=None, loss_weight_pos=1.0, loss_weight_rot=1.0):
     """ Loss functions
 
     Args:
@@ -269,11 +274,12 @@ def get_loss(data_dict, config, detection=True, use_aux_regressor=False, use_ans
     else:
         data_dict["answer_loss"] = torch.zeros(1)[0].cuda()
 
-
-    #if use_aux_regressor:
-    if use_aux_regressor:
-        data_dict["aux_loss"] = compute_aux_regression_loss(data_dict)
+    if use_aux_situation:
+        aux_loss, data_dict = compute_aux_situation_loss(data_dict, loss_weight_pos, loss_weight_rot)
+        data_dict["aux_loss"] = aux_loss
     else:
+        data_dict["pos_loss"] = torch.zeros(1)[0].cuda()
+        data_dict["rot_loss"] = torch.zeros(1)[0].cuda()
         data_dict["aux_loss"] = torch.zeros(1)[0].cuda()
 
 
