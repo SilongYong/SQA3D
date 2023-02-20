@@ -1,4 +1,4 @@
-""" 
+"""
 Modified from: https://github.com/daveredrum/ScanRefer/blob/master/lib/loss_helper.py
 """
 
@@ -26,10 +26,10 @@ def compute_vote_loss(data_dict):
 
     Args:
         data_dict: dict (read-only)
-    
+
     Returns:
         vote_loss: scalar Tensor
-            
+
     Overall idea:
         If the seed point belongs to an object (votes_label_mask == 1),
         then we require it to vote for the object center.
@@ -80,7 +80,7 @@ def compute_objectness_loss(data_dict):
         objectness_mask: (batch_size, num_seed) Tensor with value 0 or 1
         object_assignment: (batch_size, num_seed) Tensor with long int
             within [0,num_gt_object-1]
-    """ 
+    """
     # Associate proposal and GT objects by point-to-point distances
     aggregated_vote_xyz = data_dict['aggregated_vote_xyz']
     gt_center = data_dict['center_label'][:,:,0:3]
@@ -177,7 +177,7 @@ def compute_box_and_sem_cls_loss(data_dict, config):
     size_label_one_hot_tiled = size_label_one_hot.unsqueeze(-1).repeat(1,1,1,3) # (B,K,num_size_cluster,3)
     predicted_size_residual_normalized = torch.sum(data_dict['size_residuals_normalized']*size_label_one_hot_tiled, 2) # (B,K,3)
 
-    mean_size_arr_expanded = torch.from_numpy(mean_size_arr.astype(np.float32)).cuda().unsqueeze(0).unsqueeze(0) # (1,1,num_size_cluster,3) 
+    mean_size_arr_expanded = torch.from_numpy(mean_size_arr.astype(np.float32)).cuda().unsqueeze(0).unsqueeze(0) # (1,1,num_size_cluster,3)
     mean_size_label = torch.sum(size_label_one_hot_tiled * mean_size_arr_expanded, 2) # (B,K,3)
     size_residual_label_normalized = size_residual_label / mean_size_label # (B,K,3)
     size_residual_normalized_loss = torch.mean(huber_loss(predicted_size_residual_normalized - size_residual_label_normalized, delta=1.0), -1) # (B,K,3) -> (B,K)
@@ -293,4 +293,3 @@ def get_loss(data_dict, config, detection=True, use_aux_regressor=False, use_ans
     loss *= 10 # amplify
     data_dict['loss'] = loss
     return loss, data_dict
-
