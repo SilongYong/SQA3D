@@ -14,7 +14,8 @@ from datetime import datetime
 
 sys.path.append(os.path.join(os.getcwd())) # HACK add the root folder
 from lib.sepdataset import ScannetQADataset, ScannetQADatasetConfig
-from lib.config import CONF 
+from lib.solver import Solver
+from lib.config import CONF
 from models.sqa_module import ScanQA
 
 # constants
@@ -34,7 +35,7 @@ def parse_option():
     parser.add_argument("--train_num_scenes", type=int, default=-1, help="Number of train scenes [default: -1]")
     parser.add_argument("--val_num_scenes", type=int, default=-1, help="Number of val scenes [default: -1]")
     parser.add_argument("--seed", type=int, default=42, help="random seed")
-    # Optimizer   
+    # Optimizer
     parser.add_argument("--optim_name", type=str, help="optimizer name", default="adam")
     parser.add_argument("--wd", type=float, help="weight decay", default=1e-5)
     parser.add_argument("--lr", type=float, help="initial learning rate", default=5e-4)
@@ -62,12 +63,11 @@ def parse_option():
     parser.add_argument("--pointnet_width", type=int, help="", default=1)
     parser.add_argument("--pointnet_depth", type=int, help="", default=2)
     parser.add_argument("--seed_feat_dim", type=int, help="", default=256) # or 288
-    parser.add_argument("--proposal_size", type=int, help="", default=128)    
+    parser.add_argument("--proposal_size", type=int, help="", default=128)
     parser.add_argument("--num_proposals", type=int, default=256, help="Proposal number [default: 256]")
-    parser.add_argument("--use_seed_lang", action="store_true", help="Fuse seed feature and language feature.")    
+    parser.add_argument("--use_seed_lang", action="store_true", help="Fuse seed feature and language feature.")
     ## module option
     parser.add_argument("--no_object_mask", action="store_true", help="objectness_mask for qa")
-    parser.add_argument("--no_aux_reg", action="store_true", help="Do NOT use auxiliary task regresser.")
     parser.add_argument("--no_answer", action="store_true", help="Do NOT train the localization module.")
     parser.add_argument("--no_detection", action="store_true", help="Do NOT train the detection module.")
     # Pretrain
@@ -78,7 +78,7 @@ def parse_option():
     parser.add_argument("--box_loss_weight", type=float, help="box loss weight", default=1.0)
     parser.add_argument("--sem_cls_loss_weight", type=float, help="sem_cls loss weight", default=0.1)
     parser.add_argument("--aux_loss_weight", type=float, help="auxiliary task loss weight", default=0.1)
-    parser.add_argument("--answer_loss_weight", type=float, help="answer loss weight", default=0.1)  
+    parser.add_argument("--answer_loss_weight", type=float, help="answer loss weight", default=0.1)
     # Answer
     parser.add_argument("--answer_cls_loss", type=str, help="answer classifier loss", default="bce") # ce, bce
     parser.add_argument("--answer_max_size", type=int, help="maximum size of answer candicates", default=-1) # default use all
@@ -99,11 +99,12 @@ def parse_option():
     ## Ablation
     parser.add_argument("--wo3d", action="store_true", help="DO NOT use 3D branch")
     parser.add_argument("--wos", action="store_true", help="DO NOT use situation")
+    parser.add_argument("--use_aux_situation", action="store_true", help="Use auxiliary situation prediction task.")
     parser.add_argument("--Hpos", type=float, default=1.0, help="position loss weight")
     parser.add_argument("--Hrot", type=float, default=1.0, help="rotation loss weight")
     args = parser.parse_args()
     return args
-    
+
 
 def get_answer_cands(args, answer_counter_list):
     answer_counter = answer_counter_list
@@ -113,7 +114,7 @@ def get_answer_cands(args, answer_counter_list):
     if answer_max_size < 0:
         answer_max_size = len(answer_counter)
     answer_counter = dict([x for x in answer_counter.most_common()[:answer_max_size] if x[1] >= args.answer_min_freq])
-    print("using {} answers out of {} ones".format(len(answer_counter), num_all_answers))    
+    print("using {} answers out of {} ones".format(len(answer_counter), num_all_answers))
     answer_cands = sorted(answer_counter.keys())
     return answer_cands, answer_counter
 
@@ -124,16 +125,16 @@ def get_dataloader(args, sqa, all_scene_list, split, config, augment, answer_cou
     tokenizer = None
 
     dataset = ScannetQADataset(
-        sqa=sqa[split], 
-        sqa_all_scene=all_scene_list, 
+        sqa=sqa[split],
+        sqa_all_scene=all_scene_list,
         answer_cands=answer_cands,
         answer_counter=answer_counter,
         answer_cls_loss=args.answer_cls_loss,
-        split=split, 
-        num_points=args.num_points, 
+        split=split,
+        num_points=args.num_points,
         use_height=(not args.no_height),
-        use_color=args.use_color, 
-        use_normal=args.use_normal, 
+        use_color=args.use_color,
+        use_normal=args.use_normal,
         use_multiview=args.use_multiview,
         tokenizer=tokenizer,
         augment=augment,
@@ -153,25 +154,25 @@ def get_model(args, config):
     model = ScanQA(
         num_answers=config.num_answers,
         # proposal
-        input_feature_dim=input_channels,            
-        num_object_class=config.num_class, 
+        input_feature_dim=input_channels,
+        num_object_class=config.num_class,
         num_heading_bin=config.num_heading_bin,
         num_size_cluster=config.num_size_cluster,
         mean_size_arr=config.mean_size_arr,
-        num_proposal=args.num_proposals, 
+        num_proposal=args.num_proposals,
         seed_feat_dim=args.seed_feat_dim,
         proposal_size=args.proposal_size,
         pointnet_width=args.pointnet_width,
-        pointnet_depth=args.pointnet_depth,        
-        vote_radius=args.vote_radius, 
-        vote_nsample=args.vote_nsample,            
+        pointnet_depth=args.pointnet_depth,
+        vote_radius=args.vote_radius,
+        vote_nsample=args.vote_nsample,
         # qa
         #answer_cls_loss="ce",
         answer_pdrop=args.answer_pdrop,
         mcan_num_layers=args.mcan_num_layers,
         mcan_num_heads=args.mcan_num_heads,
         mcan_pdrop=args.mcan_pdrop,
-        mcan_flat_mlp_size=args.mcan_flat_mlp_size, 
+        mcan_flat_mlp_size=args.mcan_flat_mlp_size,
         mcan_flat_glimpses=args.mcan_flat_glimpses,
         mcan_flat_out_size=args.mcan_flat_out_size,
         # lang
@@ -183,7 +184,7 @@ def get_model(args, config):
         hidden_size=args.hidden_size,
         # option
         use_object_mask=(not args.no_object_mask),
-        use_aux_reg=(not args.no_aux_reg),
+        use_aux_situation=args.use_aux_situation,
         use_answer=(not args.no_answer),
         wo3d = args.wo3d,
     )
@@ -203,28 +204,24 @@ def get_num_params(model):
 def get_solver(args, dataloader):
     model = get_model(args, DC)
     #wandb.watch(model, log_freq=100)
-    if not args.no_aux_reg:
-        from lib.solver_aux import Solver
-    else:
-        from lib.solver import Solver
     if args.optim_name == 'adam':
         model_params = [{"params": model.parameters()}]
         optimizer = optim.Adam(
             model_params,
-            lr=args.lr, 
+            lr=args.lr,
             betas=[args.adam_beta1, args.adam_beta2],
             eps=args.adam_epsilon,
-            weight_decay=args.wd, 
+            weight_decay=args.wd,
             amsgrad=args.amsgrad)
     elif args.optim_name == 'adamw':
-        optimizer = optim.AdamW(model.parameters(), lr=args.lr, 
+        optimizer = optim.AdamW(model.parameters(), lr=args.lr,
                                 betas=[args.adam_beta1, args.adam_beta2],
                                 eps=args.adam_epsilon,
-                                weight_decay=args.wd, 
+                                weight_decay=args.wd,
                                 amsgrad=args.amsgrad)
     elif args.optim_name == 'adamw_cb':
         from transformers import AdamW
-        optimizer = AdamW(model.parameters(), lr=args.lr, 
+        optimizer = AdamW(model.parameters(), lr=args.lr,
                                 betas=[args.adam_beta1, args.adam_beta2],
                                 eps=args.adam_epsilon,
                                 weight_decay=args.wd)
@@ -250,31 +247,31 @@ def get_solver(args, dataloader):
 
     loss_weights = {}
     loss_weights['vote_loss']       = args.vote_loss_weight
-    loss_weights['objectness_loss'] = args.objectness_loss_weight 
+    loss_weights['objectness_loss'] = args.objectness_loss_weight
     loss_weights['box_loss']        = args.box_loss_weight
     loss_weights['sem_cls_loss']    = args.sem_cls_loss_weight
     loss_weights['aux_loss']       = args.aux_loss_weight
     loss_weights['answer_loss']     = args.answer_loss_weight
 
     solver = Solver(
-        model=model, 
-        config=DC, 
-        dataloader=dataloader, 
-        optimizer=optimizer, 
-        stamp=stamp, 
+        model=model,
+        config=DC,
+        dataloader=dataloader,
+        optimizer=optimizer,
+        stamp=stamp,
         val_step=args.val_step,
         cur_criterion=args.cur_criterion,
         detection=not args.no_detection,
         use_answer=not args.no_answer,
-        use_aux_regressor=not args.no_aux_reg,
+        use_aux_situation=args.use_aux_situation,
         max_grad_norm=args.max_grad_norm,
         lr_decay_step=args.lr_decay_step,
         lr_decay_rate=args.lr_decay_rate,
         bn_decay_step=args.bn_decay_step,
         bn_decay_rate=args.bn_decay_rate,
         loss_weights=loss_weights,
-        loss_pos = args.Hpos,
-        loss_rot = args.Hrot,
+        loss_weight_pos = args.Hpos,
+        loss_weight_rot = args.Hrot,
     )
     num_params = get_num_params(model)
 
@@ -284,7 +281,7 @@ def save_info(args, root, num_params, train_dataset, val_dataset):
     info = {}
     for key, value in vars(args).items():
         info[key] = value
-    
+
     info["num_train"] = len(train_dataset)
     info["num_val"] = len(val_dataset)
     info["num_train_scenes"] = len(train_dataset.scene_list)
@@ -296,7 +293,7 @@ def save_info(args, root, num_params, train_dataset, val_dataset):
 
     answer_vocab = train_dataset.answer_counter
     with open(os.path.join(root, "answer_vocab.json"), "w") as f:
-        json.dump(answer_vocab, f, indent=4)        
+        json.dump(answer_vocab, f, indent=4)
 
 
 
@@ -309,7 +306,7 @@ def get_sqa(sqa_train, sqa_val, train_num_scenes, val_num_scenes):
     train_scene_list = sorted(list(set([data["scene_id"] for data in sqa_train])))
     val_scene_list = sorted(list(set([data["scene_id"] for data in sqa_val])))
     # set train_num_scenes
-    if train_num_scenes <= -1: 
+    if train_num_scenes <= -1:
         train_num_scenes = len(train_scene_list)
     else:
         assert len(train_scene_list) >= train_num_scenes
@@ -324,14 +321,14 @@ def get_sqa(sqa_train, sqa_val, train_num_scenes, val_num_scenes):
             new_sqa_train.append(data)
 
     # set val_num_scenes
-    if val_num_scenes <= -1: 
+    if val_num_scenes <= -1:
         val_num_scenes = len(val_scene_list)
     else:
         assert len(val_scene_list) >= val_num_scenes
 
     # slice val_scene_list
-    val_scene_list = val_scene_list[:val_num_scenes]        
-    
+    val_scene_list = val_scene_list[:val_num_scenes]
+
     new_sqa_val = []
     for data in sqa_val:
         if data["scene_id"] in val_scene_list:
@@ -351,7 +348,7 @@ def train(args, SQA_TRAIN, SQA_VAL, answer_counter_list):
         "train": sqa_train,
         "val": sqa_val,
     }
-    
+
     # dataloader
     train_dataset, train_dataloader = get_dataloader(args, sqa, all_scene_list, "train", DC, not args.no_augment, answer_counter_list)
     val_dataset, val_dataloader = get_dataloader(args, sqa, all_scene_list, "val", DC, False, answer_counter_list)
@@ -374,14 +371,14 @@ if __name__ == "__main__":
     # setting
     # os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
     project_name = "SQA"
-    SQA_TRAIN = json.load(open(os.path.join(CONF.PATH.SQA, project_name + "_train.json"))) 
+    SQA_TRAIN = json.load(open(os.path.join(CONF.PATH.SQA, project_name + "_train.json")))
     SQA_VAL = json.load(open(os.path.join(CONF.PATH.SQA, project_name + "_val.json")))
     answer_counter_list = json.load(open(os.path.join(CONF.PATH.SQA, "answer_counter.json")))
     torch.cuda.set_device('cuda:{}'.format(args.gpu))
     os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     # reproducibility
     torch.manual_seed(args.seed)
-    torch.cuda.manual_seed(args.seed) 
+    torch.cuda.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     random.seed(args.seed)
     torch.backends.cudnn.deterministic = True
@@ -389,4 +386,3 @@ if __name__ == "__main__":
     np.random.seed(args.seed)
 
     train(args, SQA_TRAIN, SQA_VAL, answer_counter_list)
-    

@@ -1,4 +1,4 @@
-""" 
+"""
 Modified from: https://github.com/daveredrum/ScanRefer/blob/master/lib/loss_helper.py
 """
 
@@ -26,10 +26,10 @@ def compute_vote_loss(data_dict):
 
     Args:
         data_dict: dict (read-only)
-    
+
     Returns:
         vote_loss: scalar Tensor
-            
+
     Overall idea:
         If the seed point belongs to an object (votes_label_mask == 1),
         then we require it to vote for the object center.
@@ -80,7 +80,7 @@ def compute_objectness_loss(data_dict):
         objectness_mask: (batch_size, num_seed) Tensor with value 0 or 1
         object_assignment: (batch_size, num_seed) Tensor with long int
             within [0,num_gt_object-1]
-    """ 
+    """
     # Associate proposal and GT objects by point-to-point distances
     aggregated_vote_xyz = data_dict['aggregated_vote_xyz']
     gt_center = data_dict['center_label'][:,:,0:3]
@@ -177,7 +177,7 @@ def compute_box_and_sem_cls_loss(data_dict, config):
     size_label_one_hot_tiled = size_label_one_hot.unsqueeze(-1).repeat(1,1,1,3) # (B,K,num_size_cluster,3)
     predicted_size_residual_normalized = torch.sum(data_dict['size_residuals_normalized']*size_label_one_hot_tiled, 2) # (B,K,3)
 
-    mean_size_arr_expanded = torch.from_numpy(mean_size_arr.astype(np.float32)).cuda().unsqueeze(0).unsqueeze(0) # (1,1,num_size_cluster,3) 
+    mean_size_arr_expanded = torch.from_numpy(mean_size_arr.astype(np.float32)).cuda().unsqueeze(0).unsqueeze(0) # (1,1,num_size_cluster,3)
     mean_size_label = torch.sum(size_label_one_hot_tiled * mean_size_arr_expanded, 2) # (B,K,3)
     size_residual_label_normalized = size_residual_label / mean_size_label # (B,K,3)
     size_residual_normalized_loss = torch.mean(huber_loss(predicted_size_residual_normalized - size_residual_label_normalized, delta=1.0), -1) # (B,K,3) -> (B,K)
@@ -191,9 +191,14 @@ def compute_box_and_sem_cls_loss(data_dict, config):
 
     return center_loss, heading_class_loss, heading_residual_normalized_loss, size_class_loss, size_residual_normalized_loss, sem_cls_loss
 
-def compute_aux_regression_loss(data_dict):
-    loss_aux = F.cross_entropy(data_dict["aux_scores"], data_dict["auxiliary_task"])
-    return loss_aux
+def compute_aux_situation_loss(data_dict, loss_weight_pos, loss_weight_rot):
+
+    loss_position = F.mse_loss(data_dict["aux_scores"][:, : 3], data_dict["auxiliary_task"][:, : 3], reduction="mean")
+    loss_quaternion = F.mse_loss(data_dict["aux_scores"][:, 3 : ], data_dict["auxiliary_task"][:, 3 : ], reduction="mean")
+    loss_aux = loss_weight_pos * loss_position + loss_weight_rot * loss_quaternion
+    data_dict["pos_loss"] = loss_position
+    data_dict["rot_loss"] = loss_quaternion
+    return loss_aux, data_dict
 
 
 def compute_answer_classification_loss(data_dict):
@@ -213,7 +218,7 @@ def compute_answer_classification_loss(data_dict):
     return loss_answer
 
 
-def get_loss(data_dict, config, detection=True, use_aux_regressor=False, use_answer=True, loss_weights=None):
+def get_loss(data_dict, config, detection=True, use_aux_situation=False, use_answer=True, loss_weights=None, loss_weight_pos=1.0, loss_weight_rot=1.0):
     """ Loss functions
 
     Args:
@@ -269,10 +274,15 @@ def get_loss(data_dict, config, detection=True, use_aux_regressor=False, use_ans
     else:
         data_dict["answer_loss"] = torch.zeros(1)[0].cuda()
 
+    if use_aux_situation:
+        aux_loss, data_dict = compute_aux_situation_loss(data_dict, loss_weight_pos, loss_weight_rot)
+        data_dict["aux_loss"] = aux_loss
+    else:
+        data_dict["pos_loss"] = torch.zeros(1)[0].cuda()
+        data_dict["rot_loss"] = torch.zeros(1)[0].cuda()
+        data_dict["aux_loss"] = torch.zeros(1)[0].cuda()
 
-    data_dict["aux_loss"] = torch.zeros(1)[0].cuda()
 
-    
     loss = loss_weights.get('vote_loss', 1.) * data_dict['vote_loss'] \
             + loss_weights.get('objectness_loss', 1.) * data_dict['objectness_loss'] \
             + loss_weights.get('box_loss', 1.) * data_dict['box_loss'] \
@@ -283,4 +293,3 @@ def get_loss(data_dict, config, detection=True, use_aux_regressor=False, use_ans
     loss *= 10 # amplify
     data_dict['loss'] = loss
     return loss, data_dict
-

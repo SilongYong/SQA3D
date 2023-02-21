@@ -1,4 +1,4 @@
-""" 
+"""
 Modified from: https://github.com/daveredrum/ScanRefer/blob/master/lib/eval_helper.py
 """
 
@@ -36,7 +36,7 @@ def construct_bbox_corners(center, box_size):
     return corners_3d
 
 
-def get_eval(data_dict, config, answer_vocab=None, use_aux_regressor=False):
+def get_eval(data_dict, config, answer_vocab=None, use_aux_situation=False):
     """ Loss functions
     Args:
         data_dict: dict
@@ -87,7 +87,7 @@ def get_eval(data_dict, config, answer_vocab=None, use_aux_regressor=False):
         num_classes = data_dict['answer_scores'].shape[1]
         pred_answers_at1 = torch.argmax(data_dict['answer_scores'], 1)
         # pred_answers: batch_size, num_answers
-        data_dict["answer_acc_at1"] = (F.one_hot(pred_answers_at1, num_classes=num_classes).float() 
+        data_dict["answer_acc_at1"] = (F.one_hot(pred_answers_at1, num_classes=num_classes).float()
                                         * data_dict['answer_cats']).max(dim=1)[0].mean()
         topk = 10
         pred_answers_at10 = data_dict['answer_scores'].topk(topk, dim=1)[1]

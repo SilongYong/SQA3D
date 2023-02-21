@@ -7,21 +7,21 @@ from models.proposal_module import ProposalModule
 from models.sep_lang_module import LangModule
 
 class ScanQA(nn.Module):
-    def __init__(self, num_answers, 
+    def __init__(self, num_answers,
         # proposal
         num_object_class, input_feature_dim,
-        num_heading_bin, num_size_cluster, mean_size_arr, 
+        num_heading_bin, num_size_cluster, mean_size_arr,
         num_proposal=256, vote_factor=1, sampling="vote_fps", seed_feat_dim=256, proposal_size=128,
         pointnet_width=1,
-        pointnet_depth=2,        
-        vote_radius=0.3, 
+        pointnet_depth=2,
+        vote_radius=0.3,
         vote_nsample=16,
         # qa
         answer_pdrop=0.3,
         mcan_num_layers=2,
         mcan_num_heads=8,
         mcan_pdrop=0.1,
-        mcan_flat_mlp_size=512, 
+        mcan_flat_mlp_size=512,
         mcan_flat_glimpses=1,
         mcan_flat_out_size=1024,
         # lang
@@ -33,43 +33,43 @@ class ScanQA(nn.Module):
         hidden_size=128,
         # option
         use_object_mask=False,
-        use_aux_reg=False,
+        use_aux_situation=False,
         use_answer=False,
         num_pos=7,
         wo3d=False,
         Lam=0.005,
     ):
-        super().__init__() 
+        super().__init__()
 
         # Option
         self.use_object_mask = use_object_mask
-        self.use_aux_reg = use_aux_reg
+        self.use_aux_situation = use_aux_situation
         self.use_answer = use_answer
         self.wo3d = wo3d
         lang_size = hidden_size * (1 + lang_use_bidir)
-        # Language encoding 
-        self.lang_net = LangModule(num_object_class, use_lang_classifier=False, 
+        # Language encoding
+        self.lang_net = LangModule(num_object_class, use_lang_classifier=False,
                                     use_bidir=lang_use_bidir, num_layers=lang_num_layers,
-                                    emb_size=lang_emb_size, hidden_size=hidden_size, pdrop=lang_pdrop)           
+                                    emb_size=lang_emb_size, hidden_size=hidden_size, pdrop=lang_pdrop)
 
         # Ojbect detection
-        self.detection_backbone = Pointnet2Backbone(input_feature_dim=input_feature_dim, 
+        self.detection_backbone = Pointnet2Backbone(input_feature_dim=input_feature_dim,
                                                 width=pointnet_width, depth=pointnet_depth,
                                                 seed_feat_dim=seed_feat_dim)
         # Hough voting
         self.voting_net = VotingModule(vote_factor, seed_feat_dim)
 
         # Vote aggregation and object proposal
-        self.proposal_net = ProposalModule(num_object_class, num_heading_bin, num_size_cluster, mean_size_arr, 
+        self.proposal_net = ProposalModule(num_object_class, num_heading_bin, num_size_cluster, mean_size_arr,
                                         num_proposal, sampling, seed_feat_dim=seed_feat_dim, proposal_size=proposal_size,
-                                        radius=vote_radius, nsample=vote_nsample)   
+                                        radius=vote_radius, nsample=vote_nsample)
 
         # Feature projection
         self.lang_feat_linear = nn.Sequential(
             nn.Linear(lang_size, hidden_size),
             nn.GELU()
         )
-        
+
         self.s_feat_linear = nn.Sequential(
             nn.Linear(lang_size, hidden_size),
             nn.GELU()
@@ -134,7 +134,7 @@ class ScanQA(nn.Module):
         #######################################
 
         # --------- LANGUAGE ENCODING ---------
-        data_dict = self.lang_net(data_dict)        
+        data_dict = self.lang_net(data_dict)
 
         #######################################
         #                                     #
@@ -144,7 +144,7 @@ class ScanQA(nn.Module):
 
         # --------- HOUGH VOTING ---------
         data_dict = self.detection_backbone(data_dict)
-            
+
         # --------- HOUGH VOTING ---------
         xyz = data_dict["fp2_xyz"]
         features = data_dict["fp2_features"] # batch_size, seed_feature_dim, num_seed, (16, 256, 1024)
@@ -178,7 +178,7 @@ class ScanQA(nn.Module):
             object_feat = data_dict['aggregated_vote_features'] # batch_size, num_proposal, proposal_size (128)
         if self.use_object_mask:
             object_mask = ~data_dict["bbox_mask"].bool().detach() #  # batch, num_proposals
-        else:            
+        else:
             object_mask = None
         if s_mask.dim() == 2:
             s_mask = s_mask.unsqueeze(1).unsqueeze(2)
@@ -186,12 +186,12 @@ class ScanQA(nn.Module):
             q_mask = q_mask.unsqueeze(1).unsqueeze(2)
         if not self.wo3d:
             if object_mask.dim() == 2:
-                object_mask = object_mask.unsqueeze(1).unsqueeze(2)        
+                object_mask = object_mask.unsqueeze(1).unsqueeze(2)
 
         # --------- QA BACKBONE ---------
         # Pre-process Lanauge & Image Feature
-        
-        s_feat = self.lang_feat_linear(s_feat)        
+
+        s_feat = self.lang_feat_linear(s_feat)
         q_feat = self.lang_feat_linear(q_feat)
         if not self.wo3d:
             object_feat = self.object_feat_linear(object_feat) # batch_size, num_proposal, hidden_size
@@ -216,12 +216,12 @@ class ScanQA(nn.Module):
         #          PROPOSAL MATCHING          #
         #                                     #
         #######################################
-        
+
         s_feat, data_dict["satt"] = self.attflat_s(
                 s_feat,
                 s_mask
         )
-        
+
         q_feat, data_dict["qatt"] = self.attflat_q(
                 q_feat,
                 q_mask,
@@ -231,7 +231,7 @@ class ScanQA(nn.Module):
                     object_feat,
                     object_mask
             )
-        
+
         if not self.wo3d:
             fuse_feat = torch.cat((s_feat, q_feat, object_feat), dim=1)
         else:
@@ -241,7 +241,7 @@ class ScanQA(nn.Module):
         #           LANGUAGE BRANCH           #
         #                                     #
         #######################################
-        if self.use_aux_reg:
+        if self.use_aux_situation:
             assert self.wo3d is False
             temp = torch.cat((s_feat, object_feat), dim=1)
             data_dict["aux_scores"] = self.aux_reg(temp)
