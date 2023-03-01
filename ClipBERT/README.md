@@ -56,7 +56,7 @@ source launch_container.sh ./data/txt_db ./data/vis_db ./data/finetune ./data/pr
 ```shell
 python src/tasks/run_video_qa.py --config src/configs/sqa_video_base_resnet50.json --output_dir /storage --do_inference 1 --inference_split test --inference_model_name clipbert --inference_txt_db $TXT_DB --inference_img_db $IMG_DB
 ```
-`$TXT_DB` and `$IMG_DB` are path to annotation file and video data. You can use `TXT_DB=/txt/sqa/video/test.jsonl` and `IMG_DB=/img/sqa/video` for inference on MSRVTT retrieval val split.
+`$TXT_DB` and `$IMG_DB` are path to annotation file and video data. You can use `TXT_DB=/txt/sqa/test.jsonl` and `IMG_DB=/img/sqa` for inference on SQA3D test split.
 
 ## Pretrained models
 - Pretrained models can be downloaded [here](https://drive.google.com/drive/folders/1WJlvLUslAOwe846oJ1W4kpmck_SlkPUR?usp=share_link). You should put the file into `/finetune/ckpt/` to test it. The correspondence between the models and the results in the paper is as follows
