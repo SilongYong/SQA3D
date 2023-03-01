@@ -567,16 +567,16 @@ def start_training(cfg):
         1. * cfg.num_train_steps / cfg.valid_steps)) + 1
 
     # restore
-    
+
     for n, p in model.cnn.feature.backbone.named_parameters():
         print(p)
-        
+
     restorer = TrainingRestorer(cfg, model, optimizer)
     print("---------------------------------------------------------------------")
     print("---------------------------------------------------------------------")
     # for n, p in model.cnn.feature.backbone.named_parameters():
     #     print(p)
-        
+
     global_step = restorer.global_step
     TB_LOGGER.global_step = global_step
     if hvd.rank() == 0:
@@ -649,7 +649,7 @@ def start_training(cfg):
             # the losses are cross entropy and mse, no need to * num_labels
 
         logits = torch.stack(logits)  # (num_frm, B, 5)
-        
+
         # print(np.any(logits.cpu().detach().numpy() == np.nan))
         # print(np.any(logits.cpu().detach().numpy() == np.inf))
         if pool_method == "mean":
@@ -776,7 +776,7 @@ def start_inference(cfg):
     inference_res_dir = join(
         cfg.output_dir,
         f"results_{os.path.splitext(os.path.basename(cfg.inference_txt_db))[0]}/"
-        f"step_{cfg.inference_model_step}_{cfg.inference_n_clips}_{cfg.score_agg_func}"
+        f"step_{cfg.inference_model_name}_{cfg.inference_n_clips}_{cfg.score_agg_func}"
     )
 
     if hvd.rank() == 0:
@@ -799,7 +799,7 @@ def start_inference(cfg):
     # setup models
     cfg.model_config = join(cfg.output_dir, "log/model_config.json")
     e2e_weights_path = join(
-        cfg.output_dir, f"ckpt/model_step_{cfg.inference_model_step}.pt")
+        cfg.output_dir, f"ckpt/{cfg.inference_model_name}.pt")
     cfg.e2e_weights_path = e2e_weights_path
     model = setup_model(cfg, device=device)
     model.eval()

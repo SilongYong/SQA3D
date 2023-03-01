@@ -193,7 +193,7 @@ class SharedConfigs(object):
         # inference only, please include substring `inference'
         # in the option to avoid been overwrite by loaded options,
         # see start_inference() in run_vqa_w_hvd.py
-        parser.add_argument("--inference_model_step", default=-1, type=int,
+        parser.add_argument("--inference_model_name", default="clipbert", type=str,
                             help="pretrained model checkpoint step")
         parser.add_argument(
             "--do_inference", default=0, type=int, choices=[0, 1],
