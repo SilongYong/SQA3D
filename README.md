@@ -11,6 +11,7 @@ by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong
 [🔥Submit your result to PwC!](https://paperswithcode.com/dataset/sqa3d) | [arXiv](https://arxiv.org/abs/2210.07474) | [slides](http://web.cs.ucla.edu/~xm/file/sqa3d_iclr23_slides.pdf) | [Project page](https://sqa3d.github.io/)
 
 ## News
+- 03/10/2023: Data visualization script have been released in the `utils` folder!
 - 03/01/2023: ClipBERT pretrained model have been released!
 - 02/13/2023: MCAN pretrained model have been released!
 - 02/07/2023: Official project page is launched!
@@ -43,6 +44,16 @@ Please refer to [data format](assets/dataset.md). Note that we only provide the 
 ## Training
 
 For each model, please refer to [ScanQA](./ScanQA/README.md), [MCAN](./MCAN/README.md), [ClipBERT](./ClipBERT/README.md) for details on how to prepare the scene data and run some experiments.
+
+## Data Visualization
+To visualize the data in SQA3D, run
+```shell
+python utils/visualize_data.py --scene_id <scene_id> --anno_path <anno_path> --ply_path <ply_path>
+```
+
+<scene_id> corresponds to the scene you want to visualize, the format should be `scenexxxx_00`.
+<anno_path> corresponds to the directory to the annotation file, should look like `dir/sqa_task`.
+<ply_path> corresponds to the directory to original ScanNet scans.
 
 ## Misc
 
