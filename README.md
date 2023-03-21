@@ -11,6 +11,7 @@ by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong
 [🔥Submit your result to PwC!](https://paperswithcode.com/dataset/sqa3d) | [arXiv](https://arxiv.org/abs/2210.07474) | [slides](http://web.cs.ucla.edu/~xm/file/sqa3d_iclr23_slides.pdf) | [Project page](https://sqa3d.github.io/)
 
 ## News
+- 03/11/2023: We will host a [challenge](https://scene-understanding.com/challenge.html) at CVPR 2023 3D Scene Understanding Workshop. 
 - 03/10/2023: Data visualization script have been released in the `utils` folder!
 - 03/01/2023: ClipBERT pretrained model have been released!
 - 02/13/2023: MCAN pretrained model have been released!
