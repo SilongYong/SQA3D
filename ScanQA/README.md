@@ -10,19 +10,19 @@ Before we start, make sure you are now in `/path/to/SQA3D/ScanQA`.
 ```shell
 cd ../utils
 python sqa_data_2_ScanQA.py
-``` 
+```
 
     ### Dataset format
     ```shell
     "scene_id": [ScanNet scene id, e.g. "scene0000_00"],
-    "object_id": [], 
+    "object_id": [],
     "object_names": [],
     "question_id": [...],
     "question": [...],
     "answers": [...],
     ```
-2. (Optional) You can download our preprocessed [SQA_data_in_ScanQA_format](https://zenodo.org/record/7544818/files/ScanQA_format.zip?download=1) in `data/qa`
-3. Download [answer_counter.json](https://zenodo.org/record/7544818/files/answer_counter.json?download=1) into data/qa, this is the file that contains all answers corresponding to all questions in the dataset.
+2. (Optional) You can download our preprocessed [SQA_data_in_ScanQA_format](https://zenodo.org/record/7792397/files/ScanQA_format.zip?download=1) in `data/qa`
+3. Download [answer_counter.json](https://zenodo.org/record/7792397/files/answer_counter.json?download=1) into data/qa, this is the file that contains all answers corresponding to all questions in the dataset.
 4. Download the preprocessed [GLoVE embedding](http://kaldir.vc.in.tum.de/glove.p) and put them under `data/`.
 5. Link the scannet utils to the current directory
     ```bash
@@ -36,10 +36,10 @@ python sqa_data_2_ScanQA.py
     python batch_load_scannet_data.py
     ```
 
-8. (Optional) Pre-process the multiview features from ENet. 
+8. (Optional) Pre-process the multiview features from ENet.
 
     a. Download [the ENet pretrained weights](http://kaldir.vc.in.tum.de/ScanRefer/scannetv2_enet.pth) and put it under `data/`
-    
+
     b. Download and unzip [the extracted ScanNet frames](http://kaldir.vc.in.tum.de/3dsis/scannet_train_images.zip) under `data/`
 
     c. Change the data paths in `config.py` marked with __TODO__ accordingly.
