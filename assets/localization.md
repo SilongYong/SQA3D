@@ -14,7 +14,7 @@ Currently, the location is decomposed into two parts: `rotation` (represented as
 
 ## Data
 
-The data for SQA3D localization task can be downloaded [here](). The format of the data is:
+The data for SQA3D localization task can be downloaded [here](https://zenodo.org/record/7792397/files/localization_task.zip?download=1). The format of the data is:
 
 - Run the following code
 
