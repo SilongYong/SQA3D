@@ -50,6 +50,14 @@ The data for SQA3D localization task can be downloaded [here](). The format of t
             },
     }
     ```
+- Explaination
+
+    - `scene_id`: the ScanNetv2 scene id of the current localization problem.
+    - `situation`: the situation description.
+    - `alternative_situation`: alnativative situation descriptions, might be ambiguous, use on your own risk.
+    - `position`: ground truth position, unit is **meter**.
+    - `rotation`: ground truth rotation, represented as quaternion.
+
 
 Please note that due to the coordinate system used by the annotations, we strongly suggest using the original 3D point cloud as 3D scene context input.
 
