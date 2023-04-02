@@ -64,7 +64,7 @@ def metric_localization(
 
 if __name__ == '__main__':
     gtlabel = json.load(open(
-        'assets/data/sqa_task/balanced/v1_balanced_sqa_annotations_test_scannetv2.json', 'r'))['annotations']
+        'assets/data/sqa_task/balanced/v1_balanced_localization_test_scannetv2.json', 'r'))['annotations']
     gt_pos, gt_rot, pred_pos, pred_rot = [], [], [], []
     for label in gtlabel:
         gt_pos.append([*label['position'].values()])
