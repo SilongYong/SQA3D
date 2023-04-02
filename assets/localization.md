@@ -7,14 +7,14 @@ SQA3D Localization task
 The goal of localization is achieving "situation understanding" as depicted above.
 In essense, the task is to predict the current location the agent situates given a 3D scene context and a situation description.
 
-Currently, the location is decomposed into two parts: `rotation` (represented as quaternion in xyzw) and `position` (represented as translation in xyz). Starting from the origin, the agent transformation is as follows:
+Currently, the location is decomposed into two parts: `rotation` (represented as quaternion in xyzw) and `position` (represented as translation in xyz, unit is **meter**). Starting from the origin, the agent transformation is as follows:
 
 1. Rotate the agent as described by `rotation`.
 2. Translate the agent as described by `position`.
 
 ## Data
 
-The data for SQA3D localization task can be downloaded [here](https://zenodo.org/record/7792397/files/localization_task.zip?download=1). The format of the data is:
+The data for SQA3D localization task can be downloaded [here](). The format of the data is:
 
 - Run the following code
 
