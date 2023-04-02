@@ -41,7 +41,7 @@ The code has been tested with Python 3.9, PyTorch 1.12.0 and CUDA 11.3 on Ubuntu
 
 ##  SQA3D data format
 
-Please refer to [data format](assets/dataset.md). Note that we only provide the SQA3D annotations. To obtain the scene data (3D scans, egocentric videos or BEV pictures), please refer to [Training](https://github.com/SilongYong/SQA3D#training). SQA3D data is hosted [here](https://zenodo.org/record/7544818#.Y9eBMMlBx3g).
+Please refer to [data format](assets/dataset.md). Note that we only provide the SQA3D annotations. To obtain the scene data (3D scans, egocentric videos or BEV pictures), please refer to [Training](https://github.com/SilongYong/SQA3D#training). SQA3D data is hosted [here](https://zenodo.org/record/7792397#.ZCkprfFBx3g).
 
 ## Training
 
