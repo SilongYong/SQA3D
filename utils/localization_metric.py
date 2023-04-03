@@ -12,10 +12,10 @@ def metric_localization(
     pred_rot,
 ):
     """
-    gt_pos: [N, 3]; xyz
-    gt_rot: [N, 4]; xyzw
-    pred_pos: a list with N elements, each element is a list of pos predictions
-    pred_rot: a list with N elements, each element is a list of rot predictions
+    gt_pos: [N, 3]; ground truth position, in xyz (unit is meter)
+    gt_rot: [N, 4]; ground truth roation, in xyzw (quaternion)
+    pred_pos: a list with N elements, each element is a list of pos predictions, in xyz (unit is meter)
+    pred_rot: a list with N elements, each element is a list of rot predictions, in xyzw (quaternion)
     """
     def pos_distance(pos1, pos2):
         # ignore z
