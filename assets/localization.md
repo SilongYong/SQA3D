@@ -59,7 +59,7 @@ The data for SQA3D localization task can be downloaded [here](https://zenodo.org
     - `rotation`: ground truth rotation, represented as quaternion.
 
 
-Please note that due to the coordinate system used by the annotations, we strongly suggest using the original 3D point cloud as 3D scene context input.
+Please note that due to the coordinate system used by the annotations, we strongly suggest using the original 3D point cloud as 3D scene context input. You may also consider egocentric videos, but please considering adding per-frame camera poses as your input and and the coordinate system used by the camera should align with the point cloud.
 
 ## Metric
 
