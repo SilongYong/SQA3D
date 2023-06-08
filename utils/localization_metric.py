@@ -14,8 +14,8 @@ def metric_localization(
     """
     gt_pos: [N, 3]; ground truth position, in xyz (unit is meter)
     gt_rot: [N, 4]; ground truth roation, in xyzw (quaternion)
-    pred_pos: a list with N elements, each element is a list of pos predictions, in xyz (unit is meter)
-    pred_rot: a list with N elements, each element is a list of rot predictions, in xyzw (quaternion)
+    pred_pos: a list with N elements, each element is a list of no more than **3** pos predictions, in xyz (unit is meter)
+    pred_rot: a list with N elements, each element is a list of no more than **3** rot predictions, in xyzw (quaternion)
     """
     def pos_distance(pos1, pos2):
         # ignore z
@@ -31,6 +31,8 @@ def metric_localization(
     cnt_pos_0_5, cnt_pos_1 = 0, 0
     cnt_rot_15, cnt_rot_30 = 0, 0
     for gt_p, gt_r, pred_p, pred_r in zip(gt_pos, gt_rot, pred_pos, pred_rot):
+        assert len(pred_p) <= 3
+        assert len(pred_r) <= 3
         posdiff = min([pos_distance(gt_p, p) for p in pred_p])
         rotdiff = min([rot_distance(gt_r, r) for r in pred_r])
         if posdiff < 0.5:
