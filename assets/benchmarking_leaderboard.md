@@ -10,16 +10,16 @@ This hosts the benchmarking instructions and leaderboard of SQA3D.
 
 ## Guide
 
-Please send your result to [xiaojian.ma@ucla.com][mailto:xiaojian.ma@ucla.com]. With the following information:
+Please send your result to [xiaojian.ma@ucla.edu](mailto:xiaojian.ma@ucla.edu). With the following information:
 
 1. **The task of your submission**. We hosted two tracks for now (you may find more information on our [challenge website](https://scene-understanding.com/challenge.html)):
 
     - Situation understanding (localization). [Details](./localization.md).
-    - Situated reasoning (QA). [Details](../ScanQA/README.md)
+    - Situated reasoning (QA). [Details](../ScanQA/README.md).
 
-2. **Your setting**. Feel free to eloaborate a bit on your model:
+2. **Your setting**. Feel free to elaborate a bit on your model:
 
-    - The scene context you use: Point cloud, video, BEV picture.
+    - The scene context you use: `3D` (point cloud), `video`, `BEV` picture.
     - (QA only): Whether the model uses ground truth location and orientation.
 
 3. The **name** of your model (or team).
