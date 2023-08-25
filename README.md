@@ -8,9 +8,10 @@ This repository hosts the code for the paper:
 
 by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong.github.io/), [Zilong Zheng](https://zilongzheng.github.io/), [Qing Li](https://liqing-ustc.github.io/), [Yitao Liang](https://web.cs.ucla.edu/~yliang/), [Song-Chun Zhu](http://www.stat.ucla.edu/~sczhu/) and [Siyuan Huang](https://siyuanhuang.com/)
 
-[🔥Submit your result to PwC!](https://paperswithcode.com/dataset/sqa3d) | [arXiv](https://arxiv.org/abs/2210.07474) | [slides](http://web.cs.ucla.edu/~xm/file/sqa3d_iclr23_slides.pdf) | [Project page](https://sqa3d.github.io/)
+[🔥Submission guide and leaderboard!](./assets/benchmarking_leaderboard.md) | [arXiv](https://arxiv.org/abs/2210.07474) | [slides](https://jeasinema.github.io/file/sqa3d_iclr23_slides.pdf) | [Project page](https://sqa3d.github.io/)
 
 ## News
+- 08/25/2023: New benchmarking guide and leaderboard [here](./assets/benchmarking_leaderboard.md).
 - 04/01/2023: We introduce a new localization (situation understanding) task. Please see [this](./assets/localization.md) for more details.
 - 03/11/2023: We will host a [challenge](https://scene-understanding.com/challenge.html) at CVPR 2023 3D Scene Understanding Workshop.
 - 03/10/2023: Data visualization script have been released in the `utils` folder!

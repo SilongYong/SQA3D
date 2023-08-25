@@ -1,5 +1,8 @@
 SQA3D data
 ===
+
+## Guide
+
 1. Download the [SQA3D dataset](https://zenodo.org/record/7792397/files/sqa_task.zip?download=1) under `assets/data/`. The following files should be used:
 ```plain
 ./assets/data/sqa_task/balanced/*
@@ -88,3 +91,9 @@ print('The corresponding answer of class 123 is: ', j[1]['123'])
 ```
 
 4. To obtain the scene data, please refer to [3D scans for ScanQA](../ScanQA/README.md), [egocentric videos for ClipBERT](../ClipBERT/README.md) and [BEV pictures for MCAN](../MCAN/README.md) for more details.
+
+
+
+## Benchmarking
+
+See [bencmarking and leaderboard](./benchmarking_leaderboard.md)

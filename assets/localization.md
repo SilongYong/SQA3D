@@ -75,4 +75,4 @@ Please refer to the [evaluation script](../utils/localization_metric.py) for mor
 
 ## Benchmarking
 
-The results should be submitted to the referring expression benchmark hosted on [PwC](https://paperswithcode.com/dataset/sqa3d).
+See [bencmarking and leaderboard](./benchmarking_leaderboard.md)
