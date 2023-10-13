@@ -202,7 +202,7 @@ def gpt_llm_eval(q, pred, a):
     output = chat_llm(eval_prompt)
     return output.lower().strip() == 'yes'
 
-def compute_accuracy(data, annotation, prediction, use_gpt=False):
+def compute_accuracy(data, annotation, prediction, use_gpt_metric=False):
     # situation+question+agent_pos+agent_rot as index:
     merged = merge_data(data, annotation)
     prediction = clean_answer(prediction)
@@ -231,7 +231,7 @@ def compute_accuracy(data, annotation, prediction, use_gpt=False):
         try:
             answer = merged[index[hash]][1]['answers'][0]['answer']
 
-            if use_gpt:
+            if use_gpt_metric:
                 if i['answer'] == answer:
                     corr[hash] += 1
                 elif gpt_llm_eval(i['question'], i['answer'], answer):
@@ -266,22 +266,29 @@ def compute_accuracy(data, annotation, prediction, use_gpt=False):
     print('Acc: {}/{} = {:.4f}'.format(cnt, total, cnt/total))
 
 def main(args):
-    # data = inference_llm('gpt-3.5-turbo')
-    data = inference_llm('uqa_large')
+    if args.model == 'gpt':
+        print('Eval with GPT model')
+        data = inference_llm('gpt-3.5-turbo')
+    elif args.model == 'uqa':
+        print('Eval with Unified QA model')
+        data = inference_llm('uqa_large')
+    else:
+        raise NotImplementedError(f'{args.model} is not supported.')
 
     compute_accuracy(
         json.load(open(data_file, 'r')),
         json.load(open(annotation_file, 'r')),
         data,
-        use_gpt=args.use_gpt,
+        use_gpt_metric=args.use_gpt_metric,
     )
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="check accuracy")
 
     # Add the arguments
+    parser.add_argument("--model", choices=['uqa', 'gpt'])
     parser.add_argument('--scene_captions', type=str)
-    parser.add_argument('--use_gpt', action='store_true')
+    parser.add_argument('--use_gpt_metric', action='store_true')
 
     # Parse the arguments
     args = parser.parse_args()
