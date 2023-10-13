@@ -11,6 +11,7 @@ by [Xiaojian Ma*](http://web.cs.ucla.edu/~xm), [Silong Yong*](https://silongyong
 [🔥Submission guide and leaderboard!](./assets/benchmarking_leaderboard.md) | [arXiv](https://arxiv.org/abs/2210.07474) | [slides](https://jeasinema.github.io/file/sqa3d_iclr23_slides.pdf) | [Project page](https://sqa3d.github.io/)
 
 ## News
+- 10/13/2023: We've release the code for zero-shot models (ex. LLMs) [here](./LLM/README.md).
 - 08/25/2023: New benchmarking guide and leaderboard [here](./assets/benchmarking_leaderboard.md).
 - 04/01/2023: We introduce a new localization (situation understanding) task. Please see [this](./assets/localization.md) for more details.
 - 03/11/2023: We will host a [challenge](https://scene-understanding.com/challenge.html) at CVPR 2023 3D Scene Understanding Workshop.
@@ -46,7 +47,7 @@ Please refer to [data format](assets/dataset.md). Note that we only provide the 
 
 ## Training
 
-For each model, please refer to [ScanQA](./ScanQA/README.md), [MCAN](./MCAN/README.md), [ClipBERT](./ClipBERT/README.md) for details on how to prepare the scene data and run some experiments.
+For each model, please refer to [ScanQA](./ScanQA/README.md), [MCAN](./MCAN/README.md), [ClipBERT](./ClipBERT/README.md), [Zero-shot (LLM)](./LLM/README.md) for details on how to prepare the scene data and run some experiments.
 
 ## Data Visualization
 To visualize the data in SQA3D, run
